@@ -1,5 +1,8 @@
 점프투 장고 - 박응용
 
+런서버는 프로젝트내 mysite폴더 안에서. activate는 가상환경내 폴더 안에서.
+
+====
 웹프레임 워크를 통해  이미 구현된 기능을 시간낭비 없이 적은 인력으로 웹개발 할 수 있다. 
 https://wikidocs.net/78004
 
@@ -28,6 +31,10 @@ https://wikidocs.net/78004
 python3 manage.py runserver
 명령어를 치면 http://127.0.0.1:8000이라는 로컬 서버에서 개발환경이 시작된걸 확인할 수 있다.
 
+사용자 폴더에 .zshrc 파일 생성. 이후 나노 편집기로 
+alias mysite = 'cd /Users/koko/projects/mysite;source 
+/Users/koko/venvs/mysite/bin/activate'
+직접 cd로 폴더 접근하는 것 없이도 가상환경 activate 가능.
 =====
 
 파이참 사용
@@ -51,7 +58,53 @@ python3 manage.py runserver
 django-admin startapp pybo
 하면 파이보 디렉터리 하위에 여러 파일들이 생성된다 .
 
+http://localhost:8000/pybo
+요청시 config.urls와 관련한 오류를 볼 수 있다.
+
  404는 HTTP 오류코드 중 하나이다.
 404 오류는 브라우저가 요청한 페이지를 찾을 수 없을 경우에 발생한다.
 
 urls.py 파일은 페이지 요청이 발생하면 가장 먼저 호출되는 파일로 URL과 뷰 함수 간의 매핑을 정의한다. 뷰 함수는 views.py 파일에 정의된 함수를 말한다.
+
+urls.py 에서 
+from pybo import views
+path(‘pybo/’, views.index),
+
+하지만 AttributeError: module 'pybo.views' has no attribute 'index
+여기까지는 pybo/ 에 해당하는 url 에 views를 매핑 해줬을 뿐. pybo안의 views파일에 아무것도 없으므로 서버오류가 출력된다.
+
+from django.http import HttpResponse
+
+
+def index(request):
+    return HttpResponse("안녕하세요 pybo에 오신것을 환영합니다.")
+를 views.py 에 적어주면 정상적으로 pybo/ url하에서 응답이 이루어진다.
+=============
+장고 개발 흐름.
+
+	•	[1] 브라우저에서 로컬 서버로 http://localhost:8000/pybo 페이지를 요청하면
+	•	[2] urls.py 파일에서 /pybo URL 매핑을 확인하여 views.py 파일의 index 함수를 호출하고
+	•	[3] 호출한 결과를 브라우저에 반영한다.
+=====
+
+url 분리.
+
+실전에서는 from pyro import view를 거치지 않고, 
+config/urls.py 는 앱이 아니고 프로젝트 성격의 파일이므로 이곳에는 프로젝트 성격의 url 매핑만 추가돼야 한다.
+
+따라서 프로젝트 단위인 pybo 앱 내에서 사용하는 url 매핑을 따로 추가할 수 있게 분리해줘야 한다.
+path('pybo/', include('pybo.urls')),
+ 로 수정 해놓고 pybo 앱 내에서 파이보 관련내용 url은 손보기로 한다.
+
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path('', views.index),
+]
+==========
+
+onfig/urls.py			pybo/urls.py		최종 URL
+'pybo/'		+		''	=		'pybo/'
+'pybo/'		+'question/create/'='pybo/question/create/'
