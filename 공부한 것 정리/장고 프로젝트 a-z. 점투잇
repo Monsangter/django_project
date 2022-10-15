@@ -1,0 +1,57 @@
+점프투 장고 - 박응용
+
+웹프레임 워크를 통해  이미 구현된 기능을 시간낭비 없이 적은 인력으로 웹개발 할 수 있다. 
+https://wikidocs.net/78004
+
+
+=====
+
+가상환 경 설정 . 
+
+사용자명 폴더에 venvs 폴더를 만들고 python3 -m venv (폴더명) 으로
+해당 폴더명의 파이썬 웹개발 가상환경을 만들 수 있다. 
+이후 폴더명 이하의 bin파일로 이동해 source activate 를 치면 가상환경진입할 수 있다.
+벗어날때는 deactivate
+이후 폴더명 이하의 bin 파일로 이동해 pip install django==4.0.3 등의 명령어를 입력해 해당 버전의 가상환경을 
+설치해줄 수 있다.
+
+
+=====
+
+장고 프로젝트 생성
+
+유저명에 프로젝트폴더를 만들고 
+특정 프로젝트명의 폴더로 이동해 django-admin startproject config .장고 프로젝트를 생성한다.
+. 기호는 현재 디렉토리를 의미. ..기호는 이전 디렉토리.
+이러면 현재 mysite에서 config디렉토리에 해당하는 프로젝트가 생성된다.
+
+python3 manage.py runserver
+명령어를 치면 http://127.0.0.1:8000이라는 로컬 서버에서 개발환경이 시작된걸 확인할 수 있다.
+
+=====
+
+파이참 사용
+
+preference 에서 existing environment 방금 생성해줬던 venv이하의 개발환경을 설정해줄 수 있다.
+venvs/mysite/bin/python3
+이후 프로젝트의 config setting 에서 language code, timezone 을 각각 ‘ko-kr’ ‘asia/seoul’로 바꿔 한국에 맞는
+서버환경을 설정해줄 수 있다.
+
+projects/mysite/ 에서
+
+python3 manage.py runserver
+명령어를 치면 http://127.0.0.1:8000이라는 로컬 서버에서 개발환경이 시작된걸 확인할 수 있다.
+
+====
+
+장고 기본요소 익히기.
+
+앱
+
+django-admin startapp pybo
+하면 파이보 디렉터리 하위에 여러 파일들이 생성된다 .
+
+ 404는 HTTP 오류코드 중 하나이다.
+404 오류는 브라우저가 요청한 페이지를 찾을 수 없을 경우에 발생한다.
+
+urls.py 파일은 페이지 요청이 발생하면 가장 먼저 호출되는 파일로 URL과 뷰 함수 간의 매핑을 정의한다. 뷰 함수는 views.py 파일에 정의된 함수를 말한다.
