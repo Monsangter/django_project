@@ -1,0 +1,200 @@
+모델 
+
+데이터베이스에 데이터 저장과 조회를 위해서는 sql쿼리문을 보통 이용하지만 
+장고의 model 이용하면이런 sql쿼리문 도움 없이 데이터를 쉽게 처리할 수 있다.
+
+=======
+
+migrate 
+
+You have 18 unapplied migration(s). Your project may not work properly until you apply the 
+migrations for app(s): admin, auth, contenttypes, sessions.
+Run 'python manage.py migrate' to apply them.
+
+서버 실행시 이런 문구들을 볼 수 있는데  적용되지 않은 미그레이션들의 목록이다.
+장고 프로젝트 생성시 기본적으로 설치된 앱들이다.
+
+이 앱들의 목록은 config/settings.py] 에서 확인할 수 있다.
+
+미그레이트가 필요한 앱들은 데이터 베이스가 필요한 앱들이다.
+
+계속해서 같은 settings.py 안에서 databases를 확인해보자.
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+베이스 디렉토리의 db.sqlite3ㅔㅇ 저장, db엔진은 장고.
+
+//////// sqlite란 ?
+개발용이나 소규모 프로젝트에서 사용되는 가벼운 파일 기반 데이터 베이스로, 개발시에 이용되며
+실 운영시에는 좀더 규모있는 db를 사용한다.
+
+베이스 디렉토리에서 가상환경 세팅된채 python manage.py migrate 하면 앱들이 사용하는 테이블들이 생성된다.
+
+========
+
+DB Browser for SQLite
+https://sqlitebrowser.org/dl/
+를 깔면 gui 도구를 만날 수 있다.
+그리고 프로젝트의 db.sqlite3를 열면 자동으로 생성된 테이블들을 볼 수 있다.
+
+다만, 장고의 장점 중 하나는 테이블 작업을 위해 직접 쿼리문을 수행하지 않아도 된다는 점이다. 장고의 ORM(Object Relational Mapping)을 
+사용하면 쿼리문을 몰라도 데이터 작업을 쉽게 할 수 있다.
+
+데이터베이스를 MySQL에서 오라클로 변경하면 프로그램에서 사용한 쿼리문을 모두 해당 데이터베이스의 규칙에 맞게 수정해야 하는 어려움도 생긴다.
+
+ORM(Object Relational Mapping)을 사용하면 데이터베이스의 테이블을 모델화하여 사용하기 때문에 위에서 열거한 SQL방식의 단점이 모두 없어진다. 
+ORM을 사용하면 개발자별로 독특한 쿼리문이 만들어질 수가 없고 또 쿼리를 잘못 작성할 가능성도 낮아진다. 그리고 데이터베이스 종류가 변경되더라도 쿼리문이 
+아닌 모델을 사용하기 때문에 프로그램을 수정할 필요가 없다.
+
+========
+
+모델 작성하기
+
+이제 파이보가 사용할 데이터 모델을 만들어 보자. 파이보는 질문과 답변을 할 수 있는 파이썬 게시판 서비스이다. 따라서 파이보에는 질문과 답변에 
+해당하는 데이터 모델이 있어야 한다.
+
+=======
+
+모델의 속성
+
+질문과 답변 모델에는 최소한 다음과 같은 속성이 필요하다.
+
+질문제목, 내용, 작성일시
+
+질문, 답변내용, 답변일시
+
+======
+
+models.py
+
+pybo/models.py
+
+from django.db import models
+
+class Question(models.Model):
+    subject = models.CharField(max_length=200) #길이 제한 텍스트에는 CharField를 , 글자수 제한이 필요없는 경우에는 textfield
+    content = models.TextField()
+    create_date = models.DateTimeField()
+
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE) #다른 모델과 연결하기위해 foreignkey사용. 
+    content = models.TextField()                                      # on_delete는 연결된 질문이 삭제될경우 답변도 삭제된다는 뜻.(cascade)
+    create_date = models.DateTimeField()
+
+# Create your models here.
+
+======
+테이블 생성하기.
+작성한 모델을 가지고 테이블을 생성할 수 있다. config/settings INSTALLED_APPS에
+
+pybo.apps.PyboConfig를 추가한다.pybo/apps.py 파일에 있는 클래스로 자동으로 만들어진다.
+
+======
+makemigrations
+이제 명령어로 테이블을 생성한다. 하지만 바로 migrate 명령어를 치면 수행되지 않는데,
+모델이신규로 생성되거나 변경되면 makemigrations 명령어를 쳐줘야한다.python manage.py makemigrations
+시 pybo\migrations\0001_initial.py 파일이 자동으로 생성된다. 다만 테이블 작업을 수행하기위한 작업파일일 뿐
+실제 작업은 migrate명령어를 통해서만 가능하니 여러번 실행했다고 덮어씌어질 걱정은 안해도된다.
+
+python manage.py migrate
+========
+sqlmigrate
+
+makemigrationsㅗㄹ 데이터 베이스 작업파일 생성후, 실제 어떤 쿼리문이 실행되는지 sqlmigrate 명령으로 확인해볼 수 있다.
+python manage.py sqlmigrate pybo 0001
+pybo는 앱 이름을 의미하고 0001은 작업파일의 일련 번호를 의미한다.
+
+python manage.py migrate
+이후 sqlite 들어가면 방금 생성한 앱의 모델에 해당하는 테이블을 확인할 수 있다.
+
+========
+모델 사용하기
+python manage.py shell 처럼 장고셸을 실행한다.ㅋ
+
+이후 셸안에서 만들어논 모델들을 사용할 수 있다.
+
+=========
+question 생성
+
+from pybo.models import Question, Answer
+
+>>> from django.utils import timezone
+>>> q = Question(subject='pybo가 무엇인가요?', content='pybo에 대해서 알고 싶습니다.', create_date=timezone.now())
+>>> q.save() 
+#q생성 이후 save 함수 실행하면 질문 데이터가 1건 생성된다.
+
+
+>>> q.id
+1
+# 생성된 데이터는 id값이 생성된다.
+=========
+question 조회
+
+>>> Question.objects.all()
+<QuerySet [<Question: Question object (1)>, <Question: Question object (2)>]>
+
+#queryset 객체가 리턴되고 uqestion객체를 포함하고 있다.
+
+[파일명: projects/mysite/pybo/models.py]
+
+    def __str__(self):
+        return self.subject
+#모델의 question을 정의 했던 부분에 __str__method를 추가하면 id대신 제목을 표시할 수 있다. 
+#이후에는 1과 2라는 id 값 대신 이제 제목이 표시되는 것을 확인할 수 있을 것이다.
+>>> Question.objects.all()
+<QuerySet [<Question: pybo가 무엇인가요?>, <Question: 장고 모델 질문입니다.>]>
+#다만 셀프 메서드를 추가했다고 다시 makemigration, migrate 를 수행할 필요는 없는데, 이는 모델의 속성이 변경되었을때만 필요하기 떄문이다.
+
+=filtering 조회. 다건 리턴
+>>> Question.objects.filter(id=1)
+<QuerySet [<Question: pybo가 무엇인가요?>]>
+
+>>> Question.objects.filter(subject__contains='장고')
+<QuerySet [<Question: 장고 모델 질문입니다.>]>
+subject 속성에 장고 문자열이 포함되어 있는가?
+
+=get 조회. 한건 리턴.
+>>> Question.objects.get(id=1)
+<Question: pybo가 무엇인가요?>
+쿼리셋 대신 퀘스천 객체가 반환된다.
+
+==========
+question 수정
+
+>>> q = Question.objects.get(id=2)
+>>> q.subject = 'Django Model Question'
+>>> q.save() # save를 수행해줘야 변경된 데이터가 반영된다.
+======
+ㅂ
+>>> q.save() # save를 수행해줘야 변경된 데이터가 반영된다
+======
+question 삭제
+
+>>> q = Question.objects.get(id=1)
+>>> q.delete()
+====
+answer 작성
+>>> q = Question.objects.get(id=2)
+>>> q
+<Question: Django Model Question>
+>>> from django.utils import timezone
+>>> a = Answer(question=q, content='네 자동으로 생성됩니다.', create_date=timezone.now())
+>>> a.save()
+====
+question 조회
+>>> a = Answer.objects.get(id=1)
+>>> a
+<Answer: Answer object (1)>
+
+>>> a.question
+<Question: Django Model Question>
+
+>>> q.answer_set.all()
+<QuerySet [<Answer: Answer object (1)>]>
+
+
