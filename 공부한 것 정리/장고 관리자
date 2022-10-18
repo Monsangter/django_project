@@ -1,0 +1,59 @@
+======
+
+장고 관리자
+
+admin.py에 코드 몇줄을 추가할때마다 마법같은 기능들이 펼쳐진다
+=======
+
+슈퍼유저
+
+(mysite) c:\projects\mysite> python manage.py createsuperuser
+사용자 이름 (leave blank to use 'pahke'): admin
+이메일 주소: admin@mysite.com
+Password:
+Password (again):
+비밀번호가 너무 짧습니다. 최소 8 문자를 포함해야 합니다.
+비밀번호가 너무 일상적인 단어입니다.
+비밀번호가 전부 숫자로 되어 있습니다.
+Bypass password validation and create user anyway? [y/N]: y
+Superuser created successfully.
+
+=====
+장고 관리자 화면
+
+http://localhost:8000/admin/
+=====
+모델관리
+
+[파일명: projects/mysite/pybo/admin.py]에
+from django.contrib import admin
+from .models import Question
+
+admin.site.register(Question)
+를 추가하면 어드민 페이지에서 question 모델을 gui로 관리할 수 있다.
+
+answer 모델도 동일하게 추가해준다면 마찬가지로 장고 관리자에서 사용할수 있다.
+======
+모델 검색
+
+class QuestionAdmin(admin.ModelAdmin):
+    search_fields = ['subject']
+
+
+admin.site.register(Question, QuestionAdmin)
+
+question 모델에 세부 기능을 추가할 수 있는 question admin 클래스를 생성하고  제목 검색을 위해 search_fields 속성에 'subject'를 추가했다. 
+
+
+장고관리자에 대한 더 많은 레퍼런스
+
+https://docs.djangoproject.com/en/4.0/ref/contrib/admin/
+
+
+
+
+
+
+
+
+
