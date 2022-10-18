@@ -1,0 +1,175 @@
+조회와 템플릿.
+
+질문 목록과 질문 상세 기능을 구현해보자
+
+======
+질문 목록
+
+http://localhost:8000/pybo/
+
+파일명: projects/mysite/pybo/views.py]
+
+from django.shortcuts import render
+from .models import Question
+
+
+def index(request):
+    question_list = Question.objects.order_by('-create_date')#질문 목록 데이터 얻기. - 는 작성일시를 역순으로 정렬한다.
+    context = {'question_list': question_list}
+    return render(request, 'pybo/question_list.html', context)#render 함수는 파이썬 데이터를 템플릿에 적용하여 HTML로 반환하는 함수이다
+    
+=====
+템플릿 디렉터리
+
+render 함수에서 사용한 pybo/question_list.html 템플릿 파일을 작성해야한다.
+파일 작성이전에 템플릿 파일 저장을 위한 디렉터리를 먼저 만들어야 한다. config/settings.py 파일의 templates 항목에 설정해야한다.
+[파일명: projects/mysite/config/settings.py]
+TEMPLATES =
+'DIRS' 에서 [BASE_DIR / 'templates']로 바꿔 설정해준다.
+여러 경로를 설정할 수 있게 list 로 되어 있으나, 여기서는 base_dir ㅏㅎ나만 설정하고 여기서 base dir 은 c:\projects\mysite이다.
+그리고 추가한 templates의 디렉토리는 c:\projects\mysite\templates가 되어, 실제 templates 디렉토리를 만들어줘야한다.
+
+장고에서는 베이스 디렉 말고도 앱 디렉 바로 하위에 있는 템플릿 디렉터리도 템플릿 디렉터리로 인식하나, 최상위 기본 디렉토리에 템플릿을 두는걸 추천한다. 여러앱이
+공용으로 사용하는 템플릿을 한꺼번에 관리하면 편하기 떄문이다.
+projects/mysite/pybo/templates 즉 이런 디렉토리가 아닌
+projects/mysite/templates/pybo 이런 디렉토리를 활용한다
+=======
+템플릿 파일
+
+render 함수에 지정했던 인자인 pybo/question_list.html 를 따라 projects/mysite/templates/pybo 에 question_list.html템플릿을 지정한다.
+
+{% if question_list %}#{%%} 이런형식의 태그를 템플릿 태그라고 한다. question_list 가 있다면
+    <ul>
+    {% for question in question_list %} #question_list를 순회하며 순차적으로 하나씩 question_list에 대입.
+        <li><a href="/pybo/{{ question.id }}/#for문에 의해 대입된 question객체의 id를 출력">
+        {{ question.subject }}#for 문에 의해 대입된 questions 객체의 subject를 출력.</a></li>
+    {% endfor %}#for문과 if문 태그 끝에는 end태그가 와야하는 듯.
+    </ul>
+{% else %}
+    <p>질문이 없습니다.</p>
+{% endif %}
+
+======
+템플릿 태그.
+
+장고에서 사용하는 템플릿 태그는 다음 3가지 유형이 있다.
+
+1.분기
+{% if 조건문1 %}
+    <p>조건문1에 해당되는 경우</p>
+{% elif 조건문2 %}
+    <p>조건문2에 해당되는 경우</p>
+{% else %}
+    <p>조건문1, 2에 모두 해당되지 않는 경우</p>
+{% endif %}
+
+파이썬의 if 문과 다를바가 없다. 다만 항상 {% endif %} 태그로 닫아주어야 한다
+
+2.반복
+{% for item in list %}
+    <p>순서: {{ forloop.counter }} </p>
+    <p>{{ item }}</p>
+{% endfor %}
+
+forloop.counter	  루프내의 순서로 1부터 표시
+forloop.counter0	루프내의 순서로 0부터 표시
+forloop.first	    루프의 첫번째 순서인 경우 True
+forloop.last	    루프의 마지막 순서인 경우 True
+
+이 역시 파이썬의 for 문과 다를게 없다. 역시 마지막은 항상 {% endfor %} 태그로 닫아주어야 한다.
+템플릿 for문 안에서는 다음과 같은 forloop 객체를 사용할 수 있다.
+
+3.객체 출력
+
+객체를 출력하기 위한 태그의 사용법은 다음과 같다.
+
+{{ 객체 }}
+
+객체에 속성이 있는 경우는 파이썬과 동일한 방법으로 도트(.) 문자를 이용하여 표시하면 된다.
+
+{{ 객체.속성 }}
+
+====
+더 자세한 내용
+https://docs.djangoproject.com/en/4.0/topics/templates/ 에서 참고한다.
+
+
+
+
+
+=======
+
+테스트
+여기까지 수정하고 http://localhost:8000/pybo/ 페이지를 요청하면 퀘스천 별로 서브젝트에 퀘스천 아이디로 링크 걸려잇는 걸 확인가능 
+
+=====
+
+질문 상세
+
+질문을 클릭해보면 오류가 표시되는데  이는 페이지에 대해 url 매핑을 아직 만들어주지 않았기 때문이다.
+
+----
+urls.py
+http://localhost:8000/pybo/2/의 의도는 다음과 같다.
+
+id 값이 2인 question을 상세 조회한다.
+
+이 URL이 동작할 수 있도록 pybo/urls.py 파일을 다음과 같이 수정하자.
+
+[파일명: projects/mysite/pybo/urls.py]
+
+urlpatterns = [
+    path('', views.index),
+    path('<int:question_id>/', views.detail),
+]
+http://localhost:8000/pybo/2/ 페이지가 요청되면 여기에 등록한 매핑 룰에 의해 
+http://localhost:8000/pybo/<int:question_id>/ 가 적용되어 
+question_id 에 2가 저장되고 views.detail 함수도 실행될 것이다. <int:question_id> 에서 int는 숫자가 매핑됨을 의미한다.
+
+-----veiws.py
+
+이제 위 URL 매핑 규칙에 의해 실행되는 views.detail 함수를 만들어야 한다. 다음처럼 pybo/views.py 파일에 detail 함수를 추가하자.
+
+[파일명: projects/mysite/pybo/views.py]
+
+def detail(request, question_id):#index와 달리 매개변수로 question_id가 추가 되었다.
+#url 매핑시 저장된 question_id가 전달되어 question함수가 2로 세팅되어 detail 함수가 실행된다.
+    question = Question.objects.get(id=question_id)
+    context = {'question': question}
+    return render(request, 'pybo/question_detail.html', context)
+
+------question_detail.html
+
+뷰, url, 템플릿.
+템플릿을 수정해보자.
+
+detail 함수에서 사용할 pybo/question_detail.html 템플릿을 다음처럼 작성하자.
+
+[파일명: projects/mysite/templates/pybo/question_detail.html]
+
+<h1>{{ question.subject }}</h1>
+<div>
+    {{ question.content }}
+</div>
+{{ question.subject }}과 {{ question.content }}의 question은 detail 함수에서 템플릿에 context 변수로 전달한 Question 모델 객체이다.
+
+========
+
+
+오류페이지
+ttp://localhost:8000/pybo/30/ 같이 없는 수퀘스천 아이디의 페이지를 요청하면 오류를 발생시키게 되는데, 바람직한 오류코드는 404(notfound)이다.
+
+200 성공
+500 서버오류
+404 서버가 요청한 페이지를 찾을 수 없음.
+
+즉 바람직한 메시지를 출력하도록 detail 함수를 수정해주자.
+from django.shortcuts import render, get_object_or_404
+
+def detail(request, question_id):
+    question = get_object_or_404(Question, pk=question_id) #Question.objects.get(id=question_id)
+    context = {'question': question}
+    return render(request, 'pybo/question_detail.html', context)
+    
+
+pk는 퀘스천 모델의 기본키에 해당하는 값을 의미한다.
