@@ -1,0 +1,70 @@
+url 하드코딩
+
+url 링크 구조가 자주 변경된다면, 템플릿에서 사용한 모든 URL들을 일일이 찾아가며 수정해야 하는 리스크가 발생한다. 이러한 문제점을 해결하기 위해서는
+해당 URL에 대한 실제 링크 대신 링크의 주소가 1:1매핑되어 있는 별칭을 사용해야한다.
+
+======
+
+URL 별칭
+
+링크의 주소 대신 별칭을 사용하려면 URL매핑에 name 속성을 부여하면 된다.
+
+[파일명: projects\mysite\pybo\urls.py]
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('<int:question_id>/', views.detail, name = 'detail'),
+]
+
+http://localhost:8000/pybo/ URL은 index, http://localhost:8000/pybo/2와 같은 URL에는 detail 이라는 별칭을 부여한 것이다.
+
+=======
+템플릿에서 URL별칭 사용하기
+
+[파일명: C:\projects\mysite\templates\pybo\question_list.html]
+url 에서 별칭을 설정하면 템플릿에서 다음과 같이 사용할 수 있다.
+
+{% if question_list %}
+    <ul>
+    {% for question in question_list %}
+       #<li><a href="/pybo/{{ question.id }}/">{{ question.subject }}</a></li>  
+        <li><a href="{% url 'detail' question.id %}">{{ question.subject }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>질문이 없습니다.</p>
+{% endif %}
+
+detail 뒤의 question.id 는 URL 매핑에 정의된 <int:question_id>에 전달해야 하는 값을 의미한다.
+
+------- 파라미터명 전달
+한개의 파라미터를 전달할 경우 
+
+1.{% url 'detail' question.id %}
+
+2.{% url 'detail' question_id=question.id %}
+
+두개이상의 파라미터를 사용해야한다면, 다음과 같이 공백 문자 이후에 덧붙인다.
+
+{% url 'detail' question_id=question.id page=2 %}
+
+=========
+
+URL 네임스페이스
+
+파이보 외 다른 앱에서 중복으로 같은 이름을 사용한다면, 중복이 발생할 것이다. 이를 피하기 위해 네임스페이스를 의미하는 app_name 변수를 지정한다.
+
+pybo/urls.py 파일에 app_name을 추가
+
+app_name = 'pybo'
+
+이후 템플릿으로 돌아가, url별칭에 네임스페이스를 지정하면 된다.
+
+<a href="{% url 'pybo:detail' question.id %}">
+
+
+-------
+네임 스페이스는 이후 redirect 함수에서도 사용한다.
+
+
+
