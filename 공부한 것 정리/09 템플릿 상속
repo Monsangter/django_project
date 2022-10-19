@@ -1,0 +1,61 @@
+표준 html 구조가 아니더라도 작동은 하지만
+
+어떤 웹 브라우저를 사용하더라도 동일하게 렌더링 시키기 위해서는 웹 표준을 지키는 html 문서를 작성해야 한다.
+
+-------
+<table></table> <table>은 태그이고 열리고 닫히기까지의 한구간은 블록, 테이블 엘리먼트라고 한다.
+
+======
+템플릿 상속
+
+그렇다면 지금까지 표준을 지키지 않고 만들었던 템플릿들을 html구조가되도록 수정하려면 어떻게 해야할까?
+사실 여러 템플릿을 한번에 수정한다고 해도, 엘리먼트 바깥부분은 모두 같은 내용으로 중복될 것이다.
+때문에 이런 중복과 각 문서 별 수정이라는 불편함을 해소하기 위해 템플릿 상속 기능이 있다.
+기본이 되는 템플릿 작성후, 다른 템플릿에서 그 템플릿을 상속해 쓰는 방식이다.
+
+-----
+base.html(베이스 템플릿)
+
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+    <!-- pybo CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <title>Hello, pybo!</title>
+</head>
+<body>
+<!-- 기본 템플릿 안에 삽입될 내용 Start -->
+{% block content %}
+{% endblock %}
+<!-- 기본 템플릿 안에 삽입될 내용 End -->
+</body>
+</html>
+
+모든 템플릿이 상속해야하는 템플릿으로 표준 html 을 따른다.
+{% block content %} 와 {% endblock %} 템플릿 태그는 base.html을 상속한 템플릿에서 개별적으로 구현해야 하는 영역이 된다.
+
+---------question_list.html, question_detail.html 도 마찬가지.
+
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-3">
+    <table class="table">
+
+        (... 생략 ...)
+
+    </table>
+</div>
+{% endblock %}
+
+상속 받는 템플릿은 다음과 같이 변경한다.
+
+======
+style.css
+
+부트스트랩 적용으로 인해 style.css의 내용은 필요가 없어졌으므로 기존 내용을 모두 삭제
