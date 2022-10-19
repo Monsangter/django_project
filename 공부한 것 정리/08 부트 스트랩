@@ -1,0 +1,110 @@
+디자이너의 도움 없이도 개발자 혼자서 상당히 괜찮은 수준의 웹 페이지를 만들수 있게 도와주는 프레임워크이다. 
+트위터(Twitter)를 개발하면서 만들어졌고 현재 지속적으로 관리되고 있는 오픈소스 프로젝트이다.
+=====
+
+
+부트스트랩 설치
+
+https://getbootstrap.com/docs/5.1/getting-started/download/
+이 중에서 bootstrap.min.css 파일을 카피하여 스태틱 디렉터리에 저장하자.
+
+=====
+
+부트스트랩 적용
+
+{% if question_list %}
+    <ul>
+    {% for question in question_list %}
+        <li><a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>질문이 없습니다.</p>
+{% endif %}
+
+원본의 인덱스.
+
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+<div class="container my-3">
+    <table class="table">
+        <thead>
+        <tr class="table-dark">
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성일시</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if question_list %}
+        {% for question in question_list %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+                <a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a>
+            </td>
+            <td>{{ question.create_date }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="3">질문이 없습니다.</td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+부트스트랩 적용 코드.
+테이블 구조로 변경했으며, 변호와 작성일시 추가했다. 
+번호는 for문의 현재 순서를 의미하는 {{ forloop.counter }}를 이용
+class="container my-3", class="table", class="table-dark" 등은 부트스트랩 스타일에 정의되어 있는 클래스들이다.
+
+---- 상세 템플릿 적용
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+<div class="container my-3">
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2">{{ question.subject }}</h2>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">{{ question.content }}</div>
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    {{ question.create_date }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 답변 -->
+    <h5 class="border-bottom my-3 py-2">{{question.answer_set.count}}개의 답변이 있습니다.</h5>
+    {% for answer in question.answer_set.all %}
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    {{ answer.create_date }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- 답변 등록 -->
+    <form action="{% url 'pybo:answer_create' question.id %}" method="post" class="my-3">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="content" class="form-label">답변내용</label>
+            <textarea name="content" id="content" class="form-control" rows="10"></textarea>
+        </div>
+        <input type="submit" value="답변등록" class="btn btn-primary">
+    </form>
+</div>
+
+부트스트렙 사용시 많은 양의 html 코드를 작성해야 한다.
+질문이나 답변읜 하나의 뭉치이므로 부트스트랩의 card 컴포넌트 사용.
+
+ https://getbootstrap.com/docs/5.1/components/card/
+ 
+ 빠르고 만족스러운 화면.
+ 
+ 
