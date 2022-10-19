@@ -1,0 +1,39 @@
+지금 까지 만들었떤 질문 목록과 질문 상세 기능에 디자인을 적용해보자.
+
+=====
+
+스태틱(static) 디렉토리
+스타일 시트 파일은 장고의 스태틱 디렉토리에 저장해야한다. 템플릿 디렉터리와 마찬가지로 config/settings.py 파일에 등록하여 사용한다.
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+템플릿과 마찬가지로 앱디렉토리 하위에 static 폴더를 만들어도 되나, 같은 이유로 추천하지 않는다. 사이트의 루트 사이트로 경로 설정하자.
+
+=====
+스타일 시트
+
+이제 static 폴더에 style.css 파일을 다음과 같이 신규로 작성하자.
+
+textarea {
+    width:100%;
+}
+
+input[type=submit] {
+    margin-top:10px;
+}
+
+=====
+템플릿에 스타일 적용.
+
+detail 템플릿
+헤드태그에
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+적용.
+
+템플릿에 스타일시트와 같은 스태틱 파일을 사용하기 위해서는 템플릿 최상단에 {% load static %} 태그를 먼저 삽입해야 한다. 
+그래야만 {% static ... %}와 같은 템플릿 태그를 사용할수 있다.
+
+적용을 확인하려면 스태틱 디렉토리를 새로 만들었기 떄문에 서버를 재시작해야한다.
