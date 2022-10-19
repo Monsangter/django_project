@@ -1,0 +1,90 @@
+답변등록 폼
+
+[파일명: projects\mysite\templates\pybo\question_detail.html] 질문 상세 템플릿
+
+<form action="{% url 'pybo:answer_create' question.id %}" method="post">
+{% csrf_token %}
+<textarea name="content" id="content" rows="15"></textarea>
+<input type="submit" value="답변등록">
+</form>
+
+ 답변 저장을 위한 URL은 form 태그의 action 속성에 {% url 'pybo:answer_create' question.id %}로 추가
+ 
+ {% csrf_token %}은 보안에 관련된 항목으로 form으로 전송한 데이터가 실제 웹 페이지에서 작성한 데이터인지를 판단하는 가늠자 역할을 한다.
+ 해커가 이상한 방법으로 데이터를 전송할 경우에는 서버에서 발행한 csrf_token 값과 해커가 일방적으로 보낸 csrf_token 값이 일치하지 않기 때문에 블록킹
+ form 태그 바로 밑에 {% csrf_token %} 태그를 항상 위치시켜야 한다.
+ post요청시 form 태그에 csrf_token이 없으면 장고는 오류를 낸다.
+ 
+ ---------
+ csrf란? cross site request forgery 웹사이트 취약점 공격 방지를 위해 사용하느 ㄴ기술이다.
+ CSRF 토큰 값을 세션을 통해 발행하고 웹 페이지에서는 폼 전송시에 해당 토큰을 함께 전송하여 실제 웹 페이지에서 작성된 데이터가 전달되는지를 검증하는 기술
+  
+ 토큰 사용을 위해 csrfviewmiddleware가 필요한데, 이 미들웨어는 settings.py middleware 항목에 디폴트로 추가되어 있다.
+ 
+ 
+ ===============
+ url 매핑
+ 
+ 네임 스페이스를 써줬으니 그리고 answer_create 함수를 써줬으니 url 매핑을 새로하러 가자.
+ urlpatterns = [
+    path('', views.index, name='index'),
+    path('<int:question_id>/', views.detail, name='detail'),
+    path('answer/create/<int:question_id>/', views.answer_create, name='answer_create'),
+ ]
+ http://locahost:8000/pybo/answer/create/2/ 와 같은 페이지를 요청하면 URL 매핑 규칙에 의해 views.answer_create 함수가 호출
+ 
+ =========
+ 뷰 함수
+ 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
+from .models import Question
+
+(... 생략 ...)
+
+def answer_create(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    question.answer_set.create(content=request.POST.get('content'), create_date=timezone.now())
+    return redirect('pybo:detail', question_id=question.id)
+ 
+answer_create의 매개변수 request, question_id는 URL매핑에 의해 그 값이 전달 된다.
+http://locahost:8000/pybo/answer/create/2/ 라는 페이지를 요청하면 매개변수 question_id에는 2라는 값이 전달된다.
+
+답변창에 입력한 내용은 answer_create 함수의 request 매개 변수를 통해 읽을 수 있다.
+request.POST.get('content')로 텍스트창에 입력한 내용을 읽는다.
+POST로 전송된 폼(form) 데이터 항목 중 content 값을 의미한다.
+
+답변을 생성하기 위해 question.asnswer_set.create 를 사용하였다. question.answer_set은 질문의 답변을 의미한다. 
+Question과 Answer 모델은 서로 ForeignKey 로 연결되어 있기때문에 이처럼 사용할 수 있다.
+
+answer = Answer(question=question, content=request.POST.get('content'), create_date=timezone.now())
+    answer.save()
+    
+이렇게 생성하는 방법도 있다.
+
+redirect 함수는 페이지 이동을 위한 함수이다. pybo:detail 별칭에 해당하는 페이지로 이동하기 위해 redirect 함수를 사용했다.
+ybo:detail별칭에 해당하는 URL은 question_id가 필요하므로 question.id를 인수로 전달했다.
+
+========
+답변 저장
+
+pybo/2 를 가면 페이지를 조회할 수 있는데 디자인도 구리고, submit 폼을 눌러도 아무런 변화가 없다.
+답변 표시 기능을 템플릿에 추가하지 않아서이다.
+
+========
+답변 조회
+
+등록된 답변을 질문 상세 화면에 표시하려한다.
+
+[파일명: projects\mysite\templates\pybo\question_detail.html]
+
+<h5>{{ question.answer_set.count }}개의 답변이 있습니다.</h5>
+<div>
+    <ul>
+    {% for answer in question.answer_set.all %}
+        <li>{{ answer.content }}</li>
+    {% endfor %}
+    </ul>
+</div>
+답변을 확인할 수 있는 영역을 추가하였다. question.answer_set.count 는 답변의 총개수를 의미한다.
+question.answer_set는 질문과 연결된 답변들이다.
