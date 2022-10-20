@@ -123,4 +123,144 @@ request.method 값이 GET이 되어 if .. else .. 구문에서 else 구문을 �
             
 POST 방식에서는 form = QuestionForm(request.POST) 처럼 request.POST를 인수로 생성했다.
 request.POST에 담긴 subject, content 값이 QuestionForm의 subject, content 속성에 자동으로 저장되어 객체가 생성된다.
+ form.is_valid()는 form이 유효한지를 검사한다.
+ question = form.save(commit=False)는 form에 저장된 데이터로 Question 데이터를 저장하기 위한 코드 
+ commit=False는 임시 저장을 의미한다. 
+ form.save()를 수행하면 Question 모델의 create_date에 값이 없다는 오류가 발생할 것이다.
+ QuestionForm에는 현재 subject, content 속성만 정의되어 있고 create_date 속성은 없기 때문이다.
+ 임시 저장을 하여 question 객체를 리턴받고 create_date에 값을 설정한 후 question.save()로 실제 데이터를 저장하는 것이다.
+ 
+=========
 
+
+
+폼 위젯
+
+폼템플릿의
+{{ form.as_p }} 태그는 HTML 코드를 자동으로 생성하기 때문에 부트스트랩을 적용할 수가 없다.
+
+[파일명: projects\mysite\pybo\forms.py]
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ['subject', 'content']
+        widgets = {
+            'subject': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+        }
+        
+입력 필드에 form-control과 같은 부트스트랩 클래스를 추가할 수 있다.
+
+=======
+폼 레이블
+
+
+
+만약 질문등록 화면을 한글로 표시하고 싶다면 라벨 속성을 지정한다.
+
+        labels = {
+            'subject': '제목',
+            'content': '내용',
+        }  
+        
+========
+수동 폼 작성
+
+{{ form.as_p }}를 사용하면 빠르게 템플릿을 만들 수 있지만 HTML 코드가 자동으로 생성되므로
+ 디자인 영역과 서버 프로그램 영역이 혼재되어 웹 디자이너와 개발자의 역할을 분리하기도 모호해진다.
+ 
+ 수작업을 하기 위해 파이보 엡의 폼.
+ widgets = {
+            'subject': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+        }
+ 을 지워준다.
+ 
+ 그리고 폼 템플릿으로 간다.
+ 
+         <!-- 오류표시 Start -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field in form %}
+            {% if field.errors %}
+            <div>
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- 오류표시 End -->
+        <div class="mb-3">
+            <label for="subject" class="form-label">제목</label>
+            <input type="text" class="form-control" name="subject" id="subject"
+                   value="{{ form.subject.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" name="content"
+                      id="content" rows="10">{{ form.content.value|default_if_none:'' }}</textarea>
+        </div>
+        
+   form_isvalid()가 실패할 경우를 대비하여 오류를 표시해주는 영역을 추가 했다.
+   제목(subject) 항목의 value에는 {{ form.subject.value|default_if_none:'' }} 처럼 값을 대입해 주었는데 이것은 오류가 발생했을 경우
+   |default_if_none:''의 의미는 폼 데이터(form.subject.value)에 값이 없을 경우 None 이라는 문자열이 표시되는데 
+   None 대신 공백으로 표시하라는 의미의 템플릿 필터이다.
+-- 장고의 템플릿 필터는 |default_if_none:'' 처럼 | 기호와 함께 사용된다.
+
+
+=====
+
+답변 등록
+답변 등록에 장고 폼을 적용해보자. 
+
+1.AnswerForm을 pybo/forms.py 파일에 다음과 같이 작성하자.
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['content']
+        labels = {
+            'content': '답변내용',
+        }
+        
+2.views에 naswer_create 함수 수정
+
+from django.http import HttpResponseNotAllowed
+#답변 등록은 POST 방식만 사용되기 때문에 GET 방식으로 요청할 경우에는 HttpResponseNotAllowed 오류가 발생하도록 했다.
+from .forms import QuestionForm, AnswerForm
+
+if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.create_date = timezone.now()
+            answer.question = question
+            answer.save()
+            return redirect('pybo:detail', question_id=question.id)
+    else:
+        return HttpResponseNotAllowed('Only POST is possible.')
+        #답변 등록은 POST 방식만 사용되기 때문에 GET 방식으로 요청할 경우에는 HttpResponseNotAllowed 오류가 발생하도록 했다.
+    context = {'question': question, 'form': form}
+    return render(request, 'pybo/question_detail.html', context)
+    
+3.질문 상세 템플릿 오류표시 영역 추가.
+
+[파일명: projects\mysite\templates\pybo\question_detail.html]
+
+        <!-- 오류표시 Start -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field in form %}
+            {% if field.errors %}
+            <div>
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- 오류표시 End -->
