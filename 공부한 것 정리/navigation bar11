@@ -1,0 +1,68 @@
+내비게이션바는 모든 페이지에서 공통적으로 보여야 하므로 다음처럼 base.html 템플릿에 추가해야 한다.
+
+[파일명: projects\mysite\templates\base.html]
+
+<!-- 네비게이션바 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'pybo:index' %}">Pybo</a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">로그인</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+pybo:index 페이지로 이동해 주는 'Pybo' 로고를 가장 왼쪽에 배치했고, 오른쪽에는 '로그인' 링크를 추가했다.
+페이지가 작아졌을때
+햄버거 메뉴 버튼을 클릭해야 숨겨진 "로그인" 링크가 보일 것이다. 하지만 아직은 메뉴 버튼을 클릭해도 아무런 변화가 없다. 
+그 이유는 부트스트랩 자바스크립트 파일(bootstrap.min.js)이 base.html 파일에 포함되지 않았기 때문이다.
+
+bootstrap.min.js 파일을 base.html 로 옮긴다. 이후 base.html에서 사용할 수 있도록 /body 태그 바로 위에 추가한다.
+<!-- Bootstrap JS -->
+<script src="{% static 'bootstrap.min.js' %}"></script>
+
+이후 햄버거 버튼 클릭하면 숨겨진 링크가 표시된다. 동작형 웹 
+=====
+include
+
+장고에는 템플릿의 특정 위치에 다른 템플릿을 삽입할수 있는 include 태그가 있다.
+include 태그는 보통 템플릿에서 특정 영역이 반복적으로 사용될 경우 중복을 없애기 위해 사용한다. 
+
+다음과 같이 base.html에 포함시킬 navbar.html 템플릿을 작성하자.
+[파일명: projects\mysite\templates\navbar.html]
+
+<!-- 네비게이션바 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'pybo:index' %}">Pybo</a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">로그인</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+base.html에 삽입했던 네비게이션바의 내용과 동일하다.
