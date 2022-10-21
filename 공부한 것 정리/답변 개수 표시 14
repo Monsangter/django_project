@@ -1,0 +1,13 @@
+일반 게스판 목록에서 질문에 달린 답변 개수를 표시하느 ㄴ기능을 추가한다.
+
+[파일명: projects\mysite\templates\pybo\question_list.html]
+
+<td>
+    <a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a>
+    {% if question.answer_set.count > 0 %}
+    <span class="text-danger small mx-2">{{ question.answer_set.count }}</span>
+    {% endif %}
+</td>
+<...>
+
+{% if question.answer_set.count > 0 %}로 답변이 있는 경우를 검사하고,  {{ question.answer_set.count }}로 답변 개수를 표시했다.
