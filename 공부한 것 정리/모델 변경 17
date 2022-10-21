@@ -1,0 +1,20 @@
+이번에는 Question과 Answer 모델에 "글쓴이"에 해당되는 author 속성을 추가해 보자.
+
+
+======
+question속성 추가
+
+먼저 Question 모델에 author 속성을 추가하자.
+
+[파일명: projects\mysite\pybo\models.py]
+
+from django.db import models
+from django.contrib.auth.models import User
+
+
+class Question(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    (... 생략 ...)
+    
+author 필드는 User 모델을 ForeignKey로 적용하여 선언했다.
+User 모델은 django.contrib.auth 앱이 제공하는 사용자 모델로 회원 가입시 데이터 저장에 사용했던 모델이다.
