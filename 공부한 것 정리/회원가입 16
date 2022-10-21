@@ -1,0 +1,158 @@
+회원가입 역시 장고의 django.contrib.auth 앱을 이용하면 쉽게 구현할 수 있다.
+
+====
+회원가입 링크
+
+[파일명: projects/mysite/templates/navbar.html]
+<li>
+    {% if not user.is_authenticated %}
+    <a class="nav-link" href="{% url 'common:signup' %}">회원가입</a>
+    {% endif %}
+</li>
+
+원가입은 로그아웃 상태에서만 보일수 있도록 했다.
+
+=======
+urls.py
+
+{% url 'common:signup' %} 태그를 추가했으므로 여기에 대응하는 URL 매핑 규칙을 추가해야 한다. 
+common/urls.py 파일에 회원가입을 위한 URL 매핑 규칙을 추가하자.
+
+[파일명: projects\mysite\common\urls.py]
+from . import views
+
+urlpatterns = [
+    path('login/', auth_views.LoginView.as_view(template_name='common/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('signup/', views.signup, name='signup'),
+]
+
+이제 로그인 화면에서 회원가입 링크를 누르면 views.signup 함수가 실행될 것이다.
+
+======
+forms.py 
+
+뷰 함수를 만들기 전에 계정생성시 사용할 UserForm을 common/forms.py 파일에 작성하자.
+
+[파일명: projects\mysite\common\forms.py]
+
+
+
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+
+class UserForm(UserCreationForm):
+    email = forms.EmailField(label="이메일")
+
+    class Meta:
+        model = User
+        fields = ("username", "password1", "password2", "email")
+
+UserForm은 django.contrib.auth.forms 모듈의 UserCreationForm 클래스를 상속하여 만들었다. 
+그리고 email 속성을 추가했다. UserForm을 따로 만들지 않고 UserCreationForm을 그대로 사용해도 되지만 
+위처럼 이메일 등의 속성을 추가하기 위해서는 UserCreationForm 클래스를 상속하여 만들어야 한다.
+
+상속한 UserCreationForm은 다음과 같은 속성을 가지고 있다.
+
+속성명	      설명
+username	사용자이름
+password1	비밀번호1
+password2	비밀번호2 (비밀번호1을 제대로 입력했는지 대조하기 위한 값)
+
+UserCreationForm의 is_valid 함수는 폼에 위의 속성 3개가 모두 입력되었는지, 
+비밀번호1과 비밀번호2가 같은지, 비밀번호의 값이 비밀번호 생성 규칙에 맞는지 등을 검사하는 로직을 내부적으로 가지고 있다.
+
+==============
+views.py
+
+이제 common/views.py 파일에 회원가입을 위한 signup 함수를 다음과 같이 정의하자.
+
+[파일명: projects\mysite\common\views.py]
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from common.forms import UserForm
+
+
+def signup(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)  # 사용자 인증
+            login(request, user)  # 로그인
+            return redirect('index')
+    else:
+        form = UserForm()
+    return render(request, 'common/signup.html', {'form': form})
+    
+    signup 함수는 POST 요청인 경우에는 화면에서 입력한 데이터로 사용자를 생성하고 GET 요청인 경우에는 회원가입 화면을 보여준다.
+ authenticate와 login함수가 사용되었다. authenticate와 login함수는 django.contrib.auth 모듈의 함수로 사용자 인증과 로그인을 담당한다.
+  
+  그리고 신규 사용자를 생성한 후에 자동 로그인 될 수 있도록 authenticate와 login함수가 사용되었다. 
+  authenticate와 login함수는 django.contrib.auth 모듈의 함수로 사용자 인증과 로그인을 담당한다.
+  
+  django.contrib.auth.authenticate - 사용자 인증을 담당한다. (사용자명과 비밀번호가 정확한지 검증한다.)
+django.contrib.auth.login - 로그인을 담당한다. (사용자 세션을 생성한다.
+
+==========
+
+
+signup.html
+
+이제 회원가입 화면을 구성하는 common/signup.html 템플릿을 다음과 같이 작성하자
+
+[파일명: projects\mysite\templates\common\signup.html]
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-3">
+    <form method="post" action="{% url 'common:signup' %}">
+        {% csrf_token %}
+        {% include "form_errors.html" %}
+        <div class="mb-3">
+            <label for="username">사용자 이름</label>
+            <input type="text" class="form-control" name="username" id="username"
+                   value="{{ form.username.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="password1">비밀번호</label>
+            <input type="password" class="form-control" name="password1" id="password1"
+                   value="{{ form.password1.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="password2">비밀번호 확인</label>
+            <input type="password" class="form-control" name="password2" id="password2"
+                   value="{{ form.password2.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="email">이메일</label>
+            <input type="text" class="form-control" name="email" id="email"
+                   value="{{ form.email.value|default_if_none:'' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">생성하기</button>
+    </form>
+</div>
+{% endblock %}
+  
+  
+form 태그 밑에는 오류를 표시하기 위해 form_errors.html 템플릿을 include 했다. 
+그리고 UserForm의 속성인 사용자이름, 비밀번호1, 비밀번호2, 이메일에 해당되는 필드들을 form 항목으로 추가했다.
+
+=====
+회원가입.
+
+필수값 체크와 비밀번호 생성규칙 체크, 이메일 규칙 체크 등이 모두 잘 작동하는 것을 확인할 수 있을 것이다.
+
+
+어드민 관리패이지를 보면 
+
+
+
+만약 "비밀번호"와 "비밀번호 확인"을 다르게 입력하면 다음과 같은 오류가 발생할 것이다.
+
+이제 어드민 페이지로 들어가 인증및 권한에서 사용자를 살펴보면, 새 가입자가 가입된 것을 확인할 수 있다.
