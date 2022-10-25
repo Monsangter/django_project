@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="65cc900b-eed9-4c79-9048-ddd60251f6d8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/migrations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/migrations/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/config/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/config/asgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/config/asgi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/config/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/config/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/config/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/config/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/config/wsgi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/migrations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/migrations/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/templatetags/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/templatetags/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/templatetags/pybo_filter.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/templatetags/pybo_filter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/static/bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/static/bootstrap.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/static/bootstrap.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/static/bootstrap.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/static/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/templates/common/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/templates/common/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/templates/common/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/templates/common/signup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/templates/form_errors.html" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/templates/form_errors.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/templates/navbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/templates/pybo/question_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/templates/pybo/question_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/templates/pybo/question_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/templates/pybo/question_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/templates/pybo/question_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/templates/pybo/question_list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/08 부트 스트랩" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/08 부트 스트랩" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/09 템플릿 상속" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/09 템플릿 상속" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/URL별칭5" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/05 URL별칭" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/navigation bar11" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/11 네비게이션 바" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/paging 12" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/12 페이징" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/답변 개수 표시 14" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/14 답변 개수 표시" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/데이터저장6" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/06 데이터 저장" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/로그인과 로그아웃 15" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/15 로그인과 로그아웃" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/모델 변경 17" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/17 모델 변경" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/모델2" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/02 모델" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/생활코딩 장고." beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/셍활코딩 장고/생활코딩 장고." afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/스태틱 07" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/07 스태틱" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/장고 관리자3" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/03 장고 관리자" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/장고 프로젝트 a-z. 점투잇1" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/01 장고" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/제너릭 뷰." beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/01-1 제너릭 뷰." afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/조회와 템플릿4" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/04 조회와 템플릿" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/템플릿 필터 13" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/13 템플릿 필터" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/폼10" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/10 폼" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/회원가입 16" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/16 회원가입" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2GMWcglcWEH1o99hnVzFd4ukGl1" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/공부한 것 정리/셍활코딩 장고" />
+      <recent name="$PROJECT_DIR$/공부한 것 정리/django_jumptoit" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="65cc900b-eed9-4c79-9048-ddd60251f6d8" name="Changes" comment="" />
+      <created>1666199013862</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1666199013862</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
