@@ -25,3 +25,44 @@ ol = f’<li><a href=“/read/{topic[‘id’]}”>{topic[“title”]}</li>’
 	<ol>
 		{ol}
 	<ol>
+
+
+================
+
+템플릿 구현.
+
+def HTMLTemplate(articleTag):
+	global topics
+	ol = ‘’
+	for topic in topics:
+		ol += f’<li><a href=“/read/{topic[“id”]}”>{topic[“title”]}</a></li>’
+	return f’’’
+	<html>
+	<body>
+		<h1><a href=“/“>django</a></h1>
+		<ol>
+			{ol}
+		</ol>
+		{articleTag}
+	</body>
+	</html>
+	‘’’
+
+df index(request):
+	article = ‘’’
+	<h2>Welcome</h2>
+	Hello.Django
+	‘’’
+	return HttpRespnose(HTMLTemplate(article))
+
+——read 구현
+
+def read(request, id):
+	global topics
+	article = ‘’
+	for topic in topics:
+		if topic[‘id’] == int(id):
+			article = f’<h2>{topic[“title”]}</h2>{topic[“body”]}’
+	return HttpResponse(HTMLTemplate(article))
+
+폭발적으로 성장한 것. 모듈화가 됨. 템플릿만 고쳐도 그 템플릿을 공유하는 페이지는 전부 한번에 고칠 수 있음.
