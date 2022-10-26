@@ -1,0 +1,16 @@
+create 구현.
+
+def create(request):
+	article = ‘’’
+		<form action=“/create”>
+		<input type=“text” name=“title” placeholder=“title”> #place holder 로 입력창 설명, 
+		#나중에 서버에 데이터 전송시 설정한 name 으로 전송됨.
+		<p><textarea name =“body” placeholder = “body></textarea></p> 
+		#여러줄의 택스트를 입력받을 때 사용하는 태그.
+		<p><input type=“submit”></p>
+		</form>
+		#담겨 있는 데이터를 원하는 경로로 전송하기 위해서는 이 코드들을 폼으로 감싸야 한다.
+		#경로는 action으로 설정
+	‘’’
+	return HttpResponse(HTMLTemplate(article))
+
