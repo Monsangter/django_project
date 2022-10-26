@@ -1,0 +1,27 @@
+홈페이지 읽기 기능 구현하기
+
+아무리 복잡한 웹도 기본적으로 4가지 기능으로 이뤄진다.
+
+CRUD create, read, update, delete.
+
+READ는 두가지 기능으로 이루어져 있다.
+
+홈페이지(/)와 상세보기(/read/<id>/ 이다.
+
+‘’’ 따옴표 세개면 어러 줄 작성 가능. html 작성 가능.
+전역 변수에 대해서 함수내에서 수정을 해야할떄는 그 사용 함수에서 전역 변수로 불러와 줘야 한다.
+
+파이썬 문법 사용 가능.
+topics = [
+	{‘id’:1, ‘title’:’routing’, ‘body’:’Routing is ..’}
+	{‘id’:2, ‘title’:’view’, ‘body’:’view is ..’}
+	{‘id’:3, ‘title’:’model’, ‘body’:’model is ..’}
+]
+
+def index(request){
+ol = f’<li><a href=“/read/{topic[‘id’]}”>{topic[“title”]}</li>’
+	for topic in topics:
+	return HttpResponse(f’’’
+	<ol>
+		{ol}
+	<ol>
