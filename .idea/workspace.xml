@@ -2,14 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="65cc900b-eed9-4c79-9048-ddd60251f6d8" name="Changes" comment="Create 생활코딩 장고.">
-      <change afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/static/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/18 글쓴이 표시" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/20 뷰 파이 파일 분리" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/21 추천" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/22 앵커" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/23 마크다운" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/24 검색" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/25 추가기능" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/common/migrations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/common/migrations/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/config/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/migrations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/pybo/templatetags/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/migrations/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/게시판 만들기/mysite/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/게시판 만들기 - 점프투잇. crud ++ 기타 기능/mysite/pybo/templatetags/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/17 모델 변경" beforeDir="false" afterPath="$PROJECT_DIR$/공부한 것 정리/django_jumptoit/17 모델 변경" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +61,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666723596555</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Create 생활코딩 장고.">
+      <created>1666780714536</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1666780714536</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

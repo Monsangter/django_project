@@ -1,0 +1,110 @@
+방대해진 뷰파일을 정리하는데에는 두가지 방법이 있다.
+
+=-====
+
+첫번쨰 방법
+
+ views.py 파일만 여러 파일로 분리하고 나머지는 고치지 않아도 되는 변화가 적은 방법이다.
+
+ base_views.py
+
+base_views.py 파일을 다음과 같이 작성하자. 함수의 기능을 바꾸거나 하지 않았으므로 함수 내용은 모두 생략했다.
+
+[파일명: projects\mysite\pybo\views\base_views.py]
+
+from django.core.paginator import Paginator
+from django.shortcuts import render, get_object_or_404
+
+from ..models import Question
+
+
+def index(request):
+    (... 생략 ...)
+
+
+def detail(request, question_id):
+    (... 생략 ...)
+pybo/views.py 파일에 있던 index함수와 detail 함수를 내용의 변경없이 그대로 복사하면 된다.
+
+하지만 import 문은 조금 바꾸어야 한다. 기존 pybo/views.py에서는 from .models import Question 처럼 같은 디렉터리에 있는 models.py 모듈을 import했지만 지금은 views 디렉터리 하위에 base_views.py 파일이 위치하므로 from ..models import Question 처럼 부모디렉터리의 models.py 모듈을 import해야 한다.
+
+Ctrl+Alt+o
+mport문을 그대로 Copy한 후 Ctrl+Alt+o를 입력하면 쉽게 import문들을 정리할 수 있다.
+
+base_views.py
+question_views.py
+answer_views.py
+
+뷰 파일을 독립시킨다.
+
+__init__.py도 만들어주는데 ,
+
+views 디렉터리의 __init__.py 파일에서 views 디렉터리에 있는 base_views.py
+등의 모든 뷰 파일의 함수를 import 했기 때문에 pybo/urls.py와 같은 다른 모듈에서 views
+모듈의 함수를 사용하는 부분을 수정할 필요가 없다.
+
+========
+두번쨰 방법
+
+장고는 디버깅시 보통 urls.py 파일에서 URL에 매핑된 함수를 찾는것으로 시작한다.
+하지만 첫번째 방법을 사용하면 urls.py 파일에 매핑된 함수명은 알수 있지만 어떤 뷰 파일의 함수인지는 알 수가 없다.
+이는 views 디렉터리의 모든 뷰 파일을 찾아봐야 하는 불편함을 초래하게 한다.
+
+이러한 이유로 혼자가 아닌 여러명이 함께 하는 프로젝트라면 첫번째 방법은 절대로 추천하지 않는다
+
+ views 디렉터리의 __init__.py 파일을 제거하고 pybo/urls.py에서
+ views.index 대신 base_views.index 와 같이 전체 경로를 써주는 방법이다.
+
+views/__init__.py 파일 제거
+
+우선 문제가 되는 views 디렉터리의 __init__.py 파일을 제거하자.
+
+그리고 pybo/urls.py 파일을 다음과 같이 수정하자.
+
+[파일명: projects\mysite\pybo\urls.py]
+
+from django.urls import path
+
+from .views import base_views, question_views, answer_views
+
+app_name = 'pybo'
+
+urlpatterns = [
+    # base_views.py
+    path('',
+         base_views.index, name='index'),
+    path('<int:question_id>/',
+         base_views.detail, name='detail'),
+
+    # question_views.py
+    path('question/create/',
+         question_views.question_create, name='question_create'),
+    path('question/modify/<int:question_id>/',
+         question_views.question_modify, name='question_modify'),
+    path('question/delete/<int:question_id>/',
+         question_views.question_delete, name='question_delete'),
+
+    # answer_views.py
+    path('answer/create/<int:question_id>/',
+         answer_views.answer_create, name='answer_create'),
+    path('answer/modify/<int:answer_id>/',
+         answer_views.answer_modify, name='answer_modify'),
+    path('answer/delete/<int:answer_id>/',
+         answer_views.answer_delete, name='answer_delete'),
+]
+URL 매핑시 views.index 를 base_views.index 와 같이 해당 모듈명이 표시되도록 바꾸었다. 모듈명이 있기 때문에 이제 누가 보더라도 어떤 뷰 파일의 함수인지 명확하게 인지할 수 있다.
+
+config/urls.py
+
+그리고 config/urls.py의 index에 해당되는 URL 매핑도 views 대신 base_views를 사용하도록 다음처럼 수정해야한다.
+
+from pybo.views import base_views
+
+urlpatterns = [
+    path('pybo/', include('pybo.urls')),
+    path('common/', include('common.urls')),
+    path('admin/', admin.site.urls),
+    path('', base_views.index, name='index'),  # '/' 에 해당되는 path
+]
+
+두 번째 방법을 사용할 경우 이미 views.py 모듈을 import하여 사용하던 기존의 파이썬 프로그램을 모두 수정해야 하는 불편함은 있지만 명확해지는 장점이 있다.

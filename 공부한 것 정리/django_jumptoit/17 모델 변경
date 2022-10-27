@@ -18,3 +18,107 @@ class Question(models.Model):
     
 author 필드는 User 모델을 ForeignKey로 적용하여 선언했다.
 User 모델은 django.contrib.auth 앱이 제공하는 사용자 모델로 회원 가입시 데이터 저장에 사용했던 모델이다.
+ on_delete=models.CASCADE는 계정이 삭제되면 이 계정이 작성한 질문을 모두 삭제하라는 의미이다
+델을 변경한 후에는 반드시 makemigrations와 migrate를 통해 데이터베이스를 변경해 주어야 한다.
+
+(mysite) c:\projects\mysite>python manage.py makemigrations
+가 나오는데, Question 모델에 author를 추가하면 이미 등록되어 있던 게시물에 author에 해당되는 값이 저장되어야 하는데
+장고가 여러분에게 기존에 저장된 Question 모델 데이터의 author에 어떤 값을 저장해야 하는지 묻는 것이다.
+질문, 답변에는 author 값이 무조건 있어야 하므로 1을 입력해 강제로 임의 계정 정보를 추가해준다.
+그리고 다시 1을 치면 admin 계정이 등록된다.
+
+계정 생성시마다 id가 1부터 순차적으로 즉아하는데, 우리가 createsuperuser 로 최초 생성했던 계정인 admin의 id
+값은 1이다.
+
+이제 migrate 명령으로 변경된 내용을 데이터 베이스에 적용하자.
+
+python manage.py migrate
+
+============
+Answer 속성 추가
+
+Answer 모델에 author 속성을 추가하자.
+
+class Answer(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    (... 생략 ...)
+
+ 이하 같음.
+
+ ---- author 속성에 null 추가하기.
+
+ author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+ ===========
+ author 저장
+
+ 이제 Question, Answer 모델에 author 속성이 추가되었으므로 질문과 답변 저장시에 author도 함께 저장해야 한다.
+
+ def answer_create(request, question_id):
+    (... 생략 ...)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.author = request.user  # author 속성에 로그인 계정 저장
+
+ def question_create(request):
+    (... 생략 ...)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.author = request.user  # author 속성에 로그인 계정 저장
+
+
+ ===========
+ 로그인이 필요한 함수
+
+ 하지만 로그아웃상태에서 질문 또는 답변을 등록하면 오류가 발생한다.
+
+ request.user가 User 객체가 아닌 AnonymousUser 객체라서 발생한 것이다.
+request.user에는 로그아웃 상태이면 AnonymousUser 객체가, 로그인 상태이면 User 객체가 들어있다.
+
+ 문제를 해결하려면 request.user를 사용하는 함수에 @login_required 애너테이션을 사용해야 한다.
+ @login_required 애너테이션이 붙은 함수는 로그인이 필요한 함수를 의미한다.
+
+[파일명: projects\mysite\pybo\views.py]
+
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='common:login')
+def answer_create(request, question_id):
+    (... 생략 ...)
+
+@login_required(login_url='common:login')
+def question_create(request):
+    (... 생략 ...)
+
+. @login_required 어노테이션은 login_url='common:login' 처럼 로그인 URL을 지정할 수 있다.
+
+
+===========
+next
+
+로그아웃 상태에서 '질문 등록하기'를 눌러 로그인 화면으로 전환된 상태에서 웹 브라우저 주소창의 URL을 보면 next 파라미터가 있을 것이다.
+그런데 지금은 그렇게 되고 있지 않다. 로그인 후 next 파라미터에 있는 URL로 페이지를 이동하려면 로그인 템플릿에 다음과 같이 hidden
+타입의 next 항목을 추가해야 한다.
+
+===========
+disabled
+답변등록은 로그아웃 상태에서도 글을 텍스트에리어에 적어 놓을 수 있다. 물론 글을 저장하려하면 로그인 화면으로 이동되나,
+아에 답변 못하게 막아버리는 것이 더 좋을 것이다.
+
+[파일명: projects\mysite\templates\pybo\question_detail.html]
+<div class="mb-3">
+    <label for="content" class="form-label">답변내용</label>
+    <textarea {% if not user.is_authenticated %}disabled{% endif %}
+              name="content" id="content" class="form-control" rows="10"></textarea>
+</div>
+<input type="submit" value="답변등록" class="btn btn-primary">
+(... 생략 ...)
+로그인 상태가 아닌 경우 textarea 태그에 disabled 속성을 적용하여 입력을 못하게 만들었다.
+
+이후 답변등록을 누르면 로그인 화면으로 옮겨지는데 , 로그인 수행시 405오류가 발생한다.
+
+/answer/create가 GET 방식으로 호출되기 때문이다.
+하지만 알다시피 답변 등록시에는 POST가 아닌 경우 HttpResponseNotAllowed 오류를 발생하도록 코딩했다.
+
+else:
+        form = AnswerForm()

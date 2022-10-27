@@ -1,0 +1,151 @@
+ 수정과 삭제
+
+ 질문과 답변을 수정하고 삭제할 수 있는 기능
+
+===============
+
+수정일시
+
+먼저 질문이나 답변이 언제 수정되었는지 확인할 수 있도록 Question과 Answer 모델에 수정 일시를 의미하는
+modify_date 속성을 추가
+null=True는 데이터베이스에서 modify_date 칼럼에 null을 허용한다는 의미
+ blank=True는 form.is_valid()를 통한 입력 데이터 검증 시 값이 없어도 된다는 의미
+즉, null=True, blank=True는 어떤 조건으로든 값을 비워둘 수 있음을 의미한다.
+수정일시는 수정한 경우에만 생성되는 데이터이므로 null=True, blank=True를 지정
+
+모델이 변경되었으므로 makemigrations, migrate 명령을 수행
+
+========
+질문수정
+
+ 질문 상세 화면에서 "수정" 버튼을 클릭하여 수정 화면으로 진입해야 한다.
+[파일명: projects\mysite\templates\pybo\question_detail.html]
+
+ 사용자와 글쓴이가 동일한 경우에만 노출되도록 {% if request.user == question.author %}을 적용
+
+ ======
+urls.py
+
+{% url 'pybo:question_modify' question.id %} URL이 추가되었으므로 pybo/urls.py에
+다음처럼 URL매핑 규칙을 추가하자.
+[파일명: projects\mysite\pybo\urls.py]
+
+views.py
+
+그리고 views.question_modify 함수를 다음처럼 작성하자.
+
+[파일명: projects\mysite\pybo\views.py]
+@login_required(login_url='common:login')
+def question_modify(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.user != question.author:
+        messages.error(request, '수정권한이 없습니다')
+        return redirect('pybo:detail', question_id=question.id)
+    if request.method == "POST":
+        form = QuestionForm(request.POST, instance=question)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.modify_date = timezone.now()  # 수정일시 저장
+            question.save()
+            return redirect('pybo:detail', question_id=question.id)
+    else:
+        form = QuestionForm(instance=question)
+    context = {'form': form}
+    return render(request, 'pybo/question_form.html', context)
+
+messages는 장고가 제공하는 모듈로 넌필드 오류(non-field error)를 발생시킬 경우에 사용한다.
+수정" 버튼을 클릭하면 http://localhost:8000/pybo/question/modify/2/ 페이지가 GET 방식으로 호출되어 질문수정 화면이 보여진다.
+
+장하기" 버튼을 클릭하면 http://localhost:8000/pybo/question/modify/2/ 페이지가
+POST 방식으로 호출되어 데이터가 수정된다.
+왜냐하면 form 태그에 action 속성이 없는 경우 디폴트 action은 현재 페이지가 되기 때문이다.
+
+GET 요청인 경우 질문수정 화면에 조회된 질문의 제목과 내용이 반영될 수 있도록 다음과 같이 폼을 생성
+form = QuestionForm(instance=question)
+ 폼의 속성 값이 instance의 값으로 채워진다. 따라서 질문을 수정하는 화면에서 제목과 내용이 채워진 채로 보일 것이다.
+
+ POST 요청인 경우 수정된 내용을 반영해야 하는 케이스이므로 다음처럼 폼을 생성해야 한다.
+form = QuestionForm(request.POST, instance=question)
+instance를 기준으로 QuestionForm을 생성하지만 request.POST의 값으로 덮어쓰라
+
+그리고 질문의 수정일시는 다음처럼 현재일시로 저장되도록 했다.
+
+question.modify_date = timezone.now()
+
+=============
+오류표시
+
+[파일명: projects\mysite\templates\pybo\question_detail.html]
+
+    <!-- message 표시 -->
+    {% if messages %}
+    <div class="alert alert-danger my-3" role="alert">
+    {% for message in messages %}
+        <strong>{{ message.tags }}</strong>
+        <ul><li>{{ message.message }}</li></ul>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+론 수정은 로그인 한 사용자와 글 작성자가 동일한 경우에만 가능하기 때문에 이 오류가 표시될 일은 없을 것이다.
+하지만 비 정상적인 방법으로 질문을 수정할 경우 오류를 보여주어야 하므로 필요한 부분이다.
+=======
+질문 수정 확인
+
+=====
+질문 삭제
+
+------질문 삭제 버튼
+
+이번에는 작성한 글을 삭제할 수 있는 버튼을 다음처럼 추가해 보자.
+
+[파일명: projects\mysite\templates\pybo\question_detail.html]
+
+<a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary"
+       data-uri="{% url 'pybo:question_delete' question.id  %}">삭제</a>
+
+삭제 버튼을 눌렀을때 확인창을 호출하기 위해서는 다음과 같은 자바스크립트 코드가 필요하다.
+<script type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
+
+삭제 버튼 클릭시 "정말로 삭제하시겠습니까?"와 같은 확인창이 필요하다. 그렇기때문에 자바스크립트로 구현
+
+따라서 이와 같은 스크립트를 추가하면 "삭제" 버튼을 클릭하고 "확인"을 선택하면 data-uri 속성에 해당하는
+{% url 'pybo:question_delete' question.id %}이 호출될 것이다.
+
+---자바 스크립트 블록
+자바스크립트는 HTML 구조에서 다음과 같이 </body> 태그 바로 위에 삽입하는 것을 추천한다.
+
+[파일명: projects\mysite\pybo\urls.py]
+
+(... 생략 ...)
+
+urlpatterns = [
+    (... 생략 ...)
+    path('question/delete/<int:question_id>/', views.question_delete, name='question_delete'),
+]
+
+그리고 위에서 정의한 views.question_delete 함수를 다음처럼 작성하자.
+
+[파일명: projects\mysite\pybo\views.py]
+
+(... 생략 ...)
+
+@login_required(login_url='common:login')
+def question_delete(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.user != question.author:
+        messages.error(request, '삭제권한이 없습니다')
+        return redirect('pybo:detail', question_id=question.id)
+    question.delete()
+    return redirect('pybo:index')
+
+로그인이 필요하므로 @login_required 애너테이션을 적용

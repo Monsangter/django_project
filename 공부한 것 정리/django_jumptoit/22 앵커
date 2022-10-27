@@ -1,0 +1,21 @@
+답글을 작성하거나 수정한 후에 항상 페이지 상단으로 스크롤이 이동
+Ajax와 같은 비동기 통신 기술을 사용하여 이 문제를 해결할 수도 있지만 여기서는 보다 쉬운 방법으로 이 문제를 해결해 보자.
+
+HTML 중간에 <a id="django"></a> 라는 앵커 태그가 있다면 이 HTML을 호출하는 URL 뒤에 #django 라고
+붙여주면 해당 페이지가 호출되면서 해당 앵커로 스크롤이 이동된다.
+<a id="answer_{{ answer.id }}"></a>와 같이 앵커 태그를 추가했다.
+앵커 태그의 name 속성은 유일한 값이어야 하므로 answer_{{ answer.id }}와 같이 답변 id를 사용했다.
+
+---답변 redirect
+
+return redirect('pybo:detail', question_id=question.id)
+
+이제 답변을 등록하거나 수정할 때 위에서 지정한 앵커 태그로 이동하도록 코드를 수정하자.
+다음은 답변 등록 또는 답변 수정을 한 뒤 사용했던 기존 코드의 일부이다.
+
+return redirect('{}#answer_{}'.format(
+    resolve_url('pybo:detail', question_id=question.id), answer.id))
+
+pybo:detail URL에 #answer_2와 같은 앵커를 추가하기 위해 resolve_url 함수를 사용했다.
+resolve_url은 실제 호출되는 URL 문자열을 리턴하는 장고의 함수이다.
+

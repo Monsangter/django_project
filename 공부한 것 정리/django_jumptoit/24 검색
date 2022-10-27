@@ -1,0 +1,138 @@
+검색기능.
+
+데이터가 쌓여가는 게시판이므로 검색기능 필 수 임.
+"파이썬"이라고 검색을 하면 "파이썬" 이라는
+문자열이 제목, 내용, 질문 작성자, 답변, 답변 작성자에 존재하는지 찾아보고 그 결과를 화면에 보여주어야 한다.
+
+from django.db.models import Q
+
+kw = request.GET.get('kw', '')  # 검색어
+
+if kw:
+    question_list = question_list.filter(
+        Q(subject__icontains=kw) |  # 제목 검색
+        Q(content__icontains=kw) |  # 내용 검색
+        Q(answer__content__icontains=kw) |  # 답변 내용 검색
+        Q(author__username__icontains=kw) |  # 질문 글쓴이 검색
+        Q(answer__author__username__icontains=kw)  # 답변 글쓴이 검색
+    ).distinct()
+
+Q함수는 OR조건으로 데이터를 조회하기 위해 사용하는 함수이다. 제목과 내용 그리고 글쓴이를 OR 조건으로 검색하기 위해 사용했다.
+중복된 질문을 제거하기 위해 distinct를 사용했다.
+
+----get
+kw = request.GET.get('kw', '')  # 검색어
+위 코드에서 kw는 화면으로 부터 전달받은 검색어이다. 그리고 kw 값은 다음처럼 POST가 아닌 GET으로 읽도록 했다.
+
+즉, kw는 다음처럼 GET 방식으로 전달되어야 index 함수에서 읽을 수 있다.
+
+http://localhost:8000/?kw=파이썬&page=1
+
+kw를 GET이 아닌 POST 방식으로 전달하는 방법은 추천하고 싶지 않다.
+kw를 POST 방식으로 전달한다면 page 파라미터도 역시 POST방식으로 전달해야 한다.
+
+만약 GET이 아닌 POST 방식으로 검색과 페이징을 처리한다면 웹 브라우저에서 "새로고침" 또는
+"뒤로가기"를 했을 때 "만료된 페이지입니다."라는 오류를 종종 만나게 될 것이다.
+왜냐하면 POST 방식은 동일한 POST 요청이 발생할 경우 중복 요청을 방지하기 위해 "만료된 페이지입니다."
+라는 오류를 발생시키기 때문이다. 2페이지에서 3페이지로 갔다가 뒤로가기를 했을 때 2페이지로 가는것이 아니라 오류가
+발생한다면 엉망이 될 것이다.
+
+이러한 이유로 여러 파라미터를 조합하여 게시물 목록을 조회할 때는 GET 방식을 사용하는 것이 좋다.
+====
+검색 화면
+화면에서 kw와 page를 동시에 GET방식으로 호출하는 방법
+
+[파일명: projects\mysite\templates\pybo\question_list.html]
+
+<div class="row my-3">
+        <div class="col-6">
+            <a href="{% url 'pybo:question_create' %}" class="btn btn-primary">질문 등록하기</a>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+=====검색 폼.
+page와 kw를 동시에 GET으로 요청할 수 있는 searchForm을 다음과 같이 추가하자.
+
+<form id="searchForm" method="get" action="{% url 'index' %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+</form>
+
+kw와 page의 값은 index 함수로부터 전달될 것
+ action 속성은 '폼이 전송되는 URL'이므로 질문 목록 URL인 {% url 'index' %}를 지정했다.
+
+------페이징
+존 페이징 처리하는 부분도 ?page=1 처럼 직접 파라미터를 코딩하는 방식에서 값을 읽어 폼에 설정할 수 있도록 다음처럼 변경해야 한다.
+[파일명: projects\mysite\templates\pybo\question_list.html]
+
+<a class="page-link" data-page="{{ question_list.next_page_number }}"
+           href="javascript:void(0)">다음</a>
+
+이런 식으로.
+
+모든 페이지 링크를 href 속성에 직접 입력하는 대신 data-page 속성으로 값을 읽을 수 있도록 변경했다.
+
+----- 검색 스크립
+{% block script %}
+<script type='text/javascript'>
+const page_elements = document.getElementsByClassName("page-link");
+Array.from(page_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        document.getElementById('page').value = this.dataset.page;
+        document.getElementById('searchForm').submit();
+    });
+});
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener('click', function() {
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('page').value = 1;  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
+    document.getElementById('searchForm').submit();
+});
+</script>
+{% endblock %}
+
+age-link"라는 값을 가지고 있는 링크를 클릭하면
+ searchForm의 page 필드에 설정하여 searchForm을 요청하도록 다음과 같은 스크립트를 추가
+  검색버튼을 클릭하면 검색어 텍스트창에 입력된 값을 searchForm의 kw 필드에 설정하여
+  searchForm을 요청하도록 다음과 같은 스크립트를 추가
+
+----- 검색 함수
+화면에서 요청한 검색어가 질문 목록 조회에 적용될 수 있도록 base_views.py의 index 함수를 다음처럼 수정
+[파일명: projects\mysite\pybo\views\base_views.py]
+
+from django.db.models import Q
+(... 생략 ...)
+
+def index(request):
+    page = request.GET.get('page', '1')  # 페이지
+    kw = request.GET.get('kw', '')  # 검색어
+    question_list = Question.objects.order_by('-create_date')
+    if kw:
+        question_list = question_list.filter(
+            Q(subject__icontains=kw) |  # 제목 검색
+            Q(content__icontains=kw) |  # 내용 검색
+            Q(answer__content__icontains=kw) |  # 답변 내용 검색
+            Q(author__username__icontains=kw) |  # 질문 글쓴이 검색
+            Q(answer__author__username__icontains=kw)  # 답변 글쓴이 검색
+        ).distinct()
+    paginator = Paginator(question_list, 10)  # 페이지당 10개씩 보여주기
+    page_obj = paginator.get_page(page)
+    context = {'question_list': page_obj, 'page': page, 'kw': kw}
+    return render(request, 'pybo/question_list.html', context)
+
+(... 생략 ...)
+
+Q함수내에 사용된 subject__icontains=kw의 의미는 제목에 kw 문자열이 포함되었는지를 의미한다.
+answer__author__username__icontains 은 좀 복잡해 보이는데 "답변을 작성한 사람의 이름에 포함되는가?"
+라는 의미를 갖는다.
+filter 함수에서 모델 속성에 접근하기 위해서는 이처럼 __ (언더바 두개) 를 이용하여 하위 속성에 접근할 수 있다.
+
+ subject__contains=kw 대신 subject__icontains=kw을 사용하면 대소문자를 가리지 않고 찾아 준다

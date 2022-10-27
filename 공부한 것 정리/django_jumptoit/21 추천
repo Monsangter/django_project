@@ -1,0 +1,78 @@
+우선 Question 모델에 추천인(voter) 속성을 추가해 보자.
+
+한 명이 여러 개의 질문에 추천할 수 있으므로 다대다(N:N)" 관계를 의미하는 ManyToManyField를 사용해야 한다.
+
+ voter = models.ManyToManyField(User)  # 추천인 추가
+
+ makemigrations 명령을 실행하면 다음과 같은 오류가 발생한다
+ author와 voter가 모두 User 모델과 연결되어 있기 때문에
+ User.question_set 처럼 User 모델을 통해서 Question 데이터에 접근하려고 할 때
+ author를 기준으로 할지 voter를 기준으로 해야 할지 명확하지 않다는 오류
+
+ related_name='voter_question' 라는 인수를 지정했다.
+ 이렇게 하면 이제 특정 사용자가 작성한 질문을 얻기 위해서는 some_user.author_question.all() 처럼 사용할 수 있다.
+ 마찬가지로 특정 사용자가 추천한 질문을 얻기 위해서는 some_user.voter_question.all() 처럼 사용할 수 있다.
+
+ 이제 makemigrations 명령과 migrate 명령을 실행하자.
+
+
+ ======질문 추천
+
+<a href="javascript:void(0)" data-uri="{% url 'pybo:question_vote' question.id  %}"
+               class="recommend btn btn-sm btn-outline-secondary"> 추천
+                <span class="badge rounded-pill bg-success">{{question.voter.count}}</span>
+            </a>
+
+href의 속성이 javascript:void(0)으로 되어 있기 때문에 아무런 동작도 하지 않는다.
+하지만 class 속성에 "recommend"를
+추가하여 자바스크립로 data-uri에 정의된 URL이 호출되게 할 것이다.
+
+질문 추천 views.py
+
+그리고 URL매핑에 의해 실행되는 question_vote 함수는 다음과 같이 작성하자.
+
+[파일명: projects\mysite\pybo\views\question_views.py]
+
+@login_required(login_url='common:login')
+def question_vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.user == question.author:
+        messages.error(request, '본인이 작성한 글은 추천할수 없습니다')
+    else:
+        question.voter.add(request.user)
+    return redirect('pybo:detail', question_id=question.id)
+
+본인 추천을 방지하기 위해 로그인한 사용자와 추천하려는 질문의 글쓴이가 동일할 경우에는 추천할수 없게 하였다.
+그리고 Question 모델의 voter는 여러사람을 추가할 수 있는
+ManyToManyField이므로 question.voter.add(request.user) 처럼 add 함수를 사용하여 추천인을 추가한다.
+
+동일한 사용자를 add 할 경우에 오류가 발생할것 같지만 오류는 발생하지 않는다. 오류도 발생하지 않고 추가되지도 않는다.
+이는 ManyToManyField 내부에서 자체적으로 처리된다.
+
+=======
+답변 추
+답변의 추천수를 표시하고, 답변을 추천할 수있는 버튼을 질문 상세 템플릿에 다음과 같이 추가하자.
+
+<a href="javascript:void(0)" data-uri="{% url 'pybo:answer_vote' answer.id  %}"
+               class="recommend btn btn-sm btn-outline-secondary"> 추천
+                <span class="badge rounded-pill bg-success">{{answer.voter.count}}</span>
+            </a>
+
+            에서 {% url 'pybo:answer_vote' answer.id %}이 추가되었으므로 pybo/urls.py에 다음처럼 URL 매핑 규칙을 추가해야 한다.
+
+       답변 추천 views.py
+
+       리고 URL 매핑에 의해 실행되는 answer_vote 함수를 다음처럼 작성하자.
+
+[파일명: projects/mysite/pybo/views/answer_views.py]
+
+(... 생략 ...)
+
+@login_required(login_url='common:login')
+def answer_vote(request, answer_id):
+    answer = get_object_or_404(Answer, pk=answer_id)
+    if request.user == answer.author:
+        messages.error(request, '본인이 작성한 글은 추천할수 없습니다')
+    else:
+        answer.voter.add(request.user)
+    return redirect('pybo:detail', question_id=answer.question.id)
