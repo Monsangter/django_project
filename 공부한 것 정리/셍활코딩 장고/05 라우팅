@@ -1,0 +1,28 @@
+라우팅
+
+라우트는 경로라는 뜻이다. 즉 누가 처리할 것인가를 지정하는 일. 
+프로젝트 안 유알엘 주소 -  앱. 안 유알엘 주소 - 뷰.내. 함수
+
+1. from django.urls import path, include include 함수 임포트.
+
+2. urlpatters 에 path(‘’. include(‘myapp.urls’)) — myapp 앱 하의 urls 파일을 활용해라.
+
+3. myapp의 url 에도 필요한 루트 적기. 
+
+4.이제 views 파일을 설정한다. 
+
+5.클라이언트에 정보를 제공하기 위한 함수. index를 만들어 보자. 
+첫번째 인자로 요청되는 여러가지 정보들을 객체로 전달해주로 약속 돼 있다.
+
+6.return 값으로는 http 를 이용해 응답해주겠다는 HttpResponse 객체로 응답해준다.
+from django.shortcuts import render, HttpResponse 에서 임포트 해줘야 함.
+인자로는 전송하고 싶은 값을 적어주면 된다. HttpResponse(‘welcome’)
+
+7.이제 뷰 파일에 대한 라우팅이 필요한데, 
+urls 파일에서, from myapp (myapp 패키지(앱파일))에 있는 views를 임포트하고
+원하는 path의 두번째 인수에 views.index(views파일의 index함수) 를 넣어준다.
+
+다른 페이지도 마찬가지인데, 가변적인 url들을 한번에 처리할 수도 있다.
+path(‘read/<id>/‘, views.read) 꺽쇠안의 값은 가변적인 값을 뜻하고 id는 그 값에 부여된 변수라고 생각해도 된다.
+
+뷰파일로 넘어가 id를 파라미터로 받아 리스폰스 할때 반영해줄 수도 있다. return HttpRespnse(‘Read’ + id)

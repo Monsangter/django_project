@@ -1,0 +1,68 @@
+홈페이지 읽기 기능 구현하기
+
+아무리 복잡한 웹도 기본적으로 4가지 기능으로 이뤄진다.
+
+CRUD create, read, update, delete.
+
+READ는 두가지 기능으로 이루어져 있다.
+
+홈페이지(/)와 상세보기(/read/<id>/ 이다.
+
+‘’’ 따옴표 세개면 어러 줄 작성 가능. html 작성 가능.
+전역 변수에 대해서 함수내에서 수정을 해야할떄는 그 사용 함수에서 전역 변수로 불러와 줘야 한다.
+
+파이썬 문법 사용 가능.
+topics = [
+	{‘id’:1, ‘title’:’routing’, ‘body’:’Routing is ..’}
+	{‘id’:2, ‘title’:’view’, ‘body’:’view is ..’}
+	{‘id’:3, ‘title’:’model’, ‘body’:’model is ..’}
+]
+
+def index(request){
+ol = f’<li><a href=“/read/{topic[‘id’]}”>{topic[“title”]}</li>’
+	for topic in topics:
+	return HttpResponse(f’’’
+	<ol>
+		{ol}
+	<ol>
+
+
+================
+
+템플릿 구현.
+
+def HTMLTemplate(articleTag):
+	global topics
+	ol = ‘’
+	for topic in topics:
+		ol += f’<li><a href=“/read/{topic[“id”]}”>{topic[“title”]}</a></li>’
+	return f’’’
+	<html>
+	<body>
+		<h1><a href=“/“>django</a></h1>
+		<ol>
+			{ol}
+		</ol>
+		{articleTag}
+	</body>
+	</html>
+	‘’’
+
+df index(request):
+	article = ‘’’
+	<h2>Welcome</h2>
+	Hello.Django
+	‘’’
+	return HttpRespnose(HTMLTemplate(article))
+
+——read 구현
+
+def read(request, id):
+	global topics
+	article = ‘’
+	for topic in topics:
+		if topic[‘id’] == int(id):
+			article = f’<h2>{topic[“title”]}</h2>{topic[“body”]}’
+	return HttpResponse(HTMLTemplate(article))
+
+폭발적으로 성장한 것. 모듈화가 됨. 템플릿만 고쳐도 그 템플릿을 공유하는 페이지는 전부 한번에 고칠 수 있음.

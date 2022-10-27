@@ -1,0 +1,65 @@
+create 구현.
+
+def create(request):
+	article = ‘’’
+		<form action=“/create”>
+		<input type=“text” name=“title” placeholder=“title”> #place holder 로 입력창 설명, 
+		#나중에 서버에 데이터 전송시 설정한 name 으로 전송됨.
+		<p><textarea name =“body” placeholder = “body></textarea></p> 
+		#여러줄의 택스트를 입력받을 때 사용하는 태그.
+		<p><input type=“submit”></p>
+		</form>
+		#담겨 있는 데이터를 원하는 경로로 전송하기 위해서는 이 코드들을 폼으로 감싸야 한다.
+		#경로는 action으로 설정
+	‘’’
+	return HttpResponse(HTMLTemplate(article))
+
+==============
+생성 기능 구현 2
+
+http://localhost:8000/read/1/
+http://localhost:8000/read/?id=1&mode=…(서버에 질의할떄 사용하는 쿼리스트링 )
+
+요즘 트렌드에서는 위에 방식이 더 깔끔하기 때문에 위 방식을 사용한다.
+어쨋든 둘다 서버로부터 url이 데이터를 겟하는 방식이다.
+
+/create/?title=crud+is… 이런식의 url 은 서버에 있는 데이터를 변경하는 작업이다.
+주소에 입력값이 포함돼 있다면, 공유시 클릭할때마다 글이 추가 되는 오류가 나올 수 있다. 
+즉 변경시에는 쿼리스트링이 포함되면 절대로 안된다. 
+
+이떄 post를 사용한다. post를 사용하면, 헤더라는 곳안에 데이터를 포함해서 눈에보이지 않게 보낼 수 있다.
+폼에 디폴트는 겟방식이나, method = “post”를 추가해주면 포스트 방식으로 작동하게 된다.
+
+payload확인시 url 이 아닌 다른 방식으로 정보를 전송한 것을 확인할 수 있다.
+
+다만 장고의 보안 기능때문에 csrf보안을 추가하지 않으면, 오류가 나온다.
+
+==============
+생성 기능 구현 3
+
+이제 요청이 겟으로 왔을때와 포스트로 왔을떄를 구분해보자. 
+
+
+사용자 요청이 들어오면 장고가 요청을 받고 그것을 해석해서 뷰 안의 함수를 호출하는 것이다.
+httprequest객체 를 인자로 받는데, 패키징된 여러가지 사용자들의 요청 정보들을 객체 형태로 만들어 공급하는 것이다.
+그리고 http response를 통해 리턴 되는 것이다. 
+
+장고 request를 구글링 해보면 
+
+request.method를 통해 사용자가 요청을 get으로 보냈는지 post로 보냈는지 알 수 있다. 이것을 이용해 처리를 나눠줄 수 있다.
+
+if request.method == ‘GET’:
+elif request.method ==‘POST’:
+		title = request.POST[‘title’]
+		body = request.POST[‘body’]
+		newTopic = {“id”:nextId, “title”:title, “body”:body}
+		topics.append(newTopic)
+		url = ‘/read/‘+nextId
+		nextId = nextId + 1
+		return redirect(url)
+
+글을 쓰면 그 쓴 글 페이지로 리디렉션 되도록 설정을 해줘야 한다. 
+장고 뻥션에서 redirect 검색 가능.
+장고 숏컷 패키지에서 redirect 함수 임포트 
+
+

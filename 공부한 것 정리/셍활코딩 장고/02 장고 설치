@@ -1,0 +1,19 @@
+장고 설치
+
+1. python3 -m pip install django
+
+2.django-admin 을 치면 서브명령들이 나온다.
+
+3.django-admin startproject [프로젝트명] 생성위치(. 사용시 현재 디렉토리)
+프로젝트 생성시 여러 파일들이 자동 설치된다. 
+
+settings는 웹프로젝트를 운영하는데 큰 도움이 되는 파일
+
+urls는 사용자의 요청에 따라 누가 처리해줄 것인가? 라우팅
+
+manage.py는 프로젝트디렉토리 바깥에 있는데 프로젝트를 하는데 중요한 유틸리티 파일
+
+4, python3 manage.py 서브명령들 나옴.
+
+5. python3 manage.py runserver 서버 실행
+python3 manage.py runserver [ 포트번호] 
