@@ -1,0 +1,70 @@
+이전 장에서 settings.py의 ALLOWED_HOSTS를 수정하였다.
+하지만 로컬 PC에서 파이보를 구동하면 다음과 같은 오류가 발생
+서버의 고정 아이피를 등록했기 때문에 localhost로 동작하는 로컬서버는 위와 같은 오류를 만나게 된다.
+문제를 해결하기 위해서는 로컬환경과 서버환경을 구분해서 서버를 동작시켜야만 한다.
+즉, 서버환경에서의 ALLOWED_HOSTS와 로컬환경에서의 ALLOWED_HOSTS 값을 다르게 설정할 수 있어야만 한다.
+
+=========
+settings.py 분리
+
+settings.py 파일을 분리하는 방법은 이전에 알아보았던 views.py 파일을 분리하는 방법과 비슷하다.
+다음과 같이 로컬 환경에서 settings 디렉터리를 생성
+
+(mysite) c:\projects\mysite>cd config
+(mysite) c:\projects\mysite\config>mkdir settings
+
+mv config/settings.py config/settings/base.py
+
+만들어진 settings 디렉토리에 settings.py가 base.py 로
+이름이 바뀌어 복사된다.
+
+이후 base_dir 을 수정해줘야하는데, depth 가 1 더 커졌기
+때문에 .parent 를 추가해준다.
+
+--local.py
+로컬 환경을 담당할 파일
+
+from .base import *
+ALLOWED_hosts = []
+
+--prod.py
+서버 환경 담당.
+
+from .base import *
+
+ALLOWED_HOSTS = ['고정환경']
+
+===== settings
+
+런서버하면 오류가 생기는데 이는 기존 디렉토리에 있던 settings.py를
+읽지 못했기 때문이다.
+
+이후로는 로컬에서 서버를 실행할때는 mysite 디렉토리에서
+--settings=config.settings.local
+python manage.py runserver --settings=config.settings.local
+
+
+서버에서 장고 서버를 동작할때는
+--settings=config.settings.prod
+python manage.py runserver --settings=config.settings.prod
+
+==== 로컬 설정 자동화
+
+환경 변수를 설정해주면 로컬환경에서 뒤에 귀찮은 것들은 안쳐줘도 된다.
+
+=== 서버 설정 자동화
+
+서버에서 만든 가상환경 venvs 폴더 안에서
+
+nano mysite.sh 수행
+
+이후 로컬 환경에서 해줬던 alias 설정을 mysite.sh파일에 그대로 해주고
+터미널에서 mysite.sh 파일 실행.
+. mysite.sh
+
+이후 가상환경 진입과 변수 설정을 자동으로 할 수 있다.
+
+---alias 이용 법
+
+서버 홈 디렉토리 .profile 파일 맨 아랫줄에
+alias mysite='export DJANGO_SETTINGS_MODULE=config.settings.prod;cd ~/projects/mysite;. ~/venvs/mysite/bin/activate'

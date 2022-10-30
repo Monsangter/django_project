@@ -1,0 +1,105 @@
+옛날에는 유 위스키가 성능이 앞서고 편의성은 구니콘이 더좋다라는 말이 있었는데
+요즘엔 구니콘도 성능이 좋아졌다.
+
+=== 구니콘 설치
+
+서버에 필요한 도구이므로 서버환경에 구니콘을 설치해야한다.
+
+aws 서버 접속뒤 가상환경에서 pip이용 구니콘 설치.
+
+pip install gunicorn
+
+=== 구니콘 테스트
+
+구니콘이 정상으로 실행되는지 다음처럼 실행해보자.
+
+gunicorn --bind 0:8000 config.wsgi:application
+
+--bind 0:8000은  8000번 포트로 위스키 서버를 수행한다는 의미이고
+
+wsgi 서버와 연결된 위스키 어플은 config/위스키.py파일의
+어플이라는 의미이다.
+
+서버위의 파이보페이지에 접속해보면 이상하게 나오는데. 구니콘이
+bootsrap.min.css, bootstrap.min.js등의 정적 파일들을 읽지
+ 못했기 떄문이다.
+
+=====
+구니콘 소켓
+
+구니콘은 포트8000을 이용해 서버를 띄울 수 있다.
+하지만 유닉스 계열 시스템에서는 포트로 서비스 하기보다는
+유닉스 소켓으로 서비스 하는 것이 빠르고 효율적이다.
+
+현재 aws 가 unix 계열 시스템인 우분투이다.
+
+gunicorn --bind unix:/tmp/gunicorn.sock
+
+포트 방식으로 구니콘을 실행했을때와 명령어가 약간다른데
+
+--bind 0:8000를 --bind unix:/tmp/gunicorn.sock와 같이 입력
+
+유닉스 소켓방식으로 구니콘 서버를 실행하면 반드시 nginx와 같은 웹서버와
+만 함께 실행할 수 있다.
+
+==== 구니콘 서비스
+
+aws서버에 구니콘을 서비스로 등록해보자.
+
+구니콘의 시작 중지를 쉽게하고, aws서버 재시작시 구니콘을 자동으로 실행하기
+위해서이다.
+
+---구니콘의 환경변수 파일과 서비스 파일을 작성해야 한다.
+
+venvs 파일 하의 mysite.env 에 나노로
+DJANGO_SETTINGS_MODULE=config.settings.prod 입력
+
+---서비스 파일
+/etc/systemd/system/ 디렉터리에
+다음과 같은 mysite.service 파일을 생성
+스템 디렉터리에 저장해야 하므로
+sudo nano mysite.service와 같이 관리자 권한으로 파일을 작성
+
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/projects/mysite
+EnvironmentFile=/home/ubuntu/venvs/mysite.env
+ExecStart=/home/ubuntu/venvs/mysite/bin/gunicorn \
+        --workers 2 \
+        --bind unix:/tmp/gunicorn.sock \
+        config.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+서비스 파일의 환경파일 항목이 환경변수 파일을 사용하게 하는 설정이다.
+workders 2 는 구니콘 프로세스를 두개 사용하라는 의미이다.
+우리가 택한 서버에 이정도가 적당.
+
+----서비스 실행과 등록
+
+
+sudo systemctl start mysite.service
+서버 파일을 생성했으니 서비스 파일을 관리자 권한으로 실행해보자.
+
+서비스가 잘 실행됐는지 확인하려면
+sudo systemctl status mysite.service 명령
+메시지가 나타나지 않으면 /var/log/syslog 파일에서 오류 원인을 확인하고
+ 수정
+
+ 마지막으로 aws 서버가 다시 시작될때 구니콘이 실행되도록 enable 옵션을 두어
+ 서비스 등록.
+
+ sudo systemctl enable mysite.service
+
+ Gunicorn 서비스를 종료하려면 다음 명령을 수행한다.
+
+$ sudo systemctl stop mysite.service
+Gunicorn 서비스를 다시 시작하려면 다음 명령을 수행한다.
+
+$ sudo systemctl restart mysite.service

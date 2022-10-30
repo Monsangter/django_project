@@ -1,0 +1,28 @@
+서버 환경에서 장고 어드민 사용해보자. 먼저 개발환경에서처럼
+슈퍼 유저를 생성한다.
+
+===
+createsuperuser
+
+서버 환경에서 python manage.py createsuperuser 명령으로
+슈퍼 유저를 생성
+
+python manage.py createsuperuser
+사용자 이름 (leave blank to use 'ubuntu'): admin
+이메일 주소: admin@mysite.com
+Password:
+Password (again):
+Superuser created successfully.
+
+
+이제 웹브라우저에서 장고 어드민 접속가능하다.
+
+장고 어드민 접속하면 이상한데
+엔진x가 바라보는 정적 파일은 project/mysite/static 에 위치해야하나,
+
+장고 어드민이 사용하는 정적 파일들은
+mysite/lib/python3.8/site-packages/
+django/contrib/admin/static에 위치.
+장고 Admin이 사용될 때 자동으로 위 디렉터리의 정적 파일을 읽도록 설계되었다.
+
+

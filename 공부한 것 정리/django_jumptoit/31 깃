@@ -1,0 +1,81 @@
+맥에서 깃 설치
+
+git --version 을 커맨드에 쳐본다.
+
+안나오면
+
+브류에 접속. 홈브류를 다운 받고 터미널에
+
+brew install git 을 친다
+
+====
+파이보에 깃 적용하기
+
+-git init
+로컬에서 pwd 에 깃 레포지토리를 만들 수 있다. 숨김파일로 만들어짐
+
+-git status
+
+git status 명령은 현재 저장소의 상태를 출력해 준다.
+아직 관리되지 않고 있는 파일(Untracked files)들을 보여주고 git add 명령을 이용하여 관리할 파일들을 추가하라고 알려준다.
+
+-.gitignore
+
+git add 명령 수행 전에, 깃으로 관리해야 될 파일에 대한 고민이 필요하다.
+.idea나 db.sqlite3 등은 사용자별, 시스템 별로 달라지는 파일이므로 깃으로 관리하면 안 된다.
+
+.idea는 사용자 설정을 저장하는 파이참 전용 파일이고, db.sqlite3 파일은 SQLite의 데이터베이스 파일
+여러 명이 같은 저장소에서 작업할 때 .idea 파일을 누군가 변경한다면 내가 설정했던 파이참 설정 내용이 다른 사람의 것으로 변경되는 문제
+
+이를 방지하기 위해 gitignore 기능이 필요.
+
+touch .gitignore
+깃 이닛을 한 폴더 내에 .gitignore 파일을  만들고
+
+nano 편집기로 .gitignore 에 무시할 피일명들을 적어 넣는다.
+
+.idea
+db.sqlite3
+*.pyc
+__pycache__
+
+컴파일된 파이썬 파일인 *.pyc와 __pycache__ 디렉터리도 깃으로 관리되지 않도록 .gitignore 파일에 추가
+
+-git add
+
+git add *를 수행
+"줄바꿈 문자를 \n에서 \r\n으로 강제로 바꾼다"는 경고가 뜬다.
+
+이후 git status 를 확인 해보면 comit 파일에 추가된 파일들을 확인할 수 있다.
+
+-깃이 저장소에 변경 사항을 저장할때는 스테이징을 거친다.
+git add 를 하면 파일들이 스테이지 영역에 추가되고, git commit 명령을 수행해야 비로소 저장소에 저장된다.
+
+이후 git commit -m "메시지"
+
+git config --global user.email "sangdobae@icloud.com"
+git config --global user.name "배상도"
+이런식으로 이메일과 이름 설정 가능.
+
+이후 커밋하고 git status 치면 더이상 변경 내용이 없다고 나옴.
+
+base.html 에서 타이틀 태그를 좀 수정해주고 git status 명령을 쳐주면
+변경 내역 정보가 표시되며 스테이징 안된 파일내역이 나옴.
+
+git diff 명령어 사용시 어떤 부분이 달라졌는지 확인 할 수 있다.
+
+다만 한글어가 깨져나올 수도 있는데 set LC_ALL=C.UTF-8 명령을 수행. 맥은 괜찮은듯.
+
+-----
+만약 코드의 변경 내용을 되돌리고 싶으면 git restore 명령 수행하면 됨.
+git restore templates/base.html
+
+
+-----
+git commit -a
+
+변경 내용을 커밋할때 -a옵션을 넣어주면 별도 add 안 해도 됨.
+
+----
+git log
+깃으로 커밋한 이력 확인하려면 git log 하면 됨.

@@ -1,0 +1,96 @@
+웹서버(Web Server)  브라우저의 정적 페이지 요청을 처리
+동적 페이지 요청인 경우 WSGI 서버를 호출
+파이보가 사용할 웹 서버인 엔진엑스(Nginx)를 설치하고 적용
+
+
+Nginx는 높은 성능을 위해서 개발된 웹 서버로 점점 사용자가 증가하는 추세이다
+
+========
+
+nginx 설치
+
+(mysite) ubuntu@jumpto:~/projects/mysite$
+sudo apt install nginx
+
+======
+
+nginx 설정
+
+/etc/nginx/sites-available 디렉터리로 이동
+/etc/nginx/sites-available 디렉터리는 Nginx의 설정 파일들이
+위치한 디렉터리이다.
+최초 설치시에는 deafult라는 설정 파일만 존재한다.
+
+Nginx의 설정파일을 다음과 같이 관리자 권한으로 작성
+
+ubuntu@jumpto:/etc/nginx/sites-available$ sudo nano mysite
+
+ mysite 파일의 내용은 다음과 같이 작성
+[파일명: /etc/nginx/sites-available/mysite]
+
+server {
+        listen 80;
+        server_name 3.37.58.70;
+
+        location = /favicon.ico { access_log off; log_not_found off; }
+
+        location /static {
+                alias /home/ubuntu/projects/mysite/static;
+        }
+
+        location / {
+                include proxy_params;
+                proxy_pass http://unix:/tmp/gunicorn.sock;
+
+listen 80은 웹서버를 80포트로 서비스한다는 의미.
+
+이제 포트를 생략하여 http://3.37.58.70 처럼 웹 브라우저에서 접속 할 수 있다.
+
+server_name 에는 여러분의 고정IP를 등록한다.
+
+location /static은 정적 파일에 대한 설정
+
+/static으로 시작되는 URL 요청은 Nginx가
+/home/ubuntu/projects/mysite/static 디렉터리의 파일을 읽어서 처리
+
+location /은 location /static 에서 설정한 것 이외의 모든 요청은
+Gunicorn이 처리하도록 하는 설정
+
+proxy_pass는 동적 요청이 발생하면 해당 요청을 Gunicorn의 유닉스 소켓으로 보내라
+
+이제 작성한 mysite 파일을 Nginx가 환경 파일로 읽을 수 있도록 설정
+
+/etc/nginx/sites-enabled 디렉터리로 이동
+sites-enabled 디렉터리는 site-available 디렉터리에 있는 설정 파일
+ 중에서 활성화하고 싶은 것을 링크로 관리하는 디렉터리.
+
+ls 명령 수행시 default 설정 파일만 링크됨을 확인 가능.
+디폴트링크를 삭제하고  mysite 파일을 링크한다.
+
+(mysite) ubuntu@jumpto:/etc/nginx/sites-enabled$
+sudo ln -s /etc/nginx/sites-available/mysite
+
+ls 명령 실행시 mysite 링크만 확인가능
+
+====
+nginx 실행
+
+(mysite) ubuntu@jumpto:/etc/nginx/sites-enabled$
+sudo systemctl restart nginx
+엔진엑스 재시작
+
+--엔진엑스 설정파일 오류 확인
+nginx -t 명령 수행 시 오류가 발생한다면 설정이 올바르지 않은 경우이므로
+Nginx서버가 정상적으로 실행되지 않을 것이다.
+
+Nginx를 중지하는 명령
+(mysite) ubuntu@jumpto:/etc/nginx/sites-enabled$ sudo systemctl stop nginx
+
+nginx 실행 명(mysite) ubuntu@jumpto:/etc/nginx/sites-enabled$ sudo systemctl start nginx
+
+=====
+파이보 작동 확인하기
+
+http://3.37.58.70:80
+처럼 사용할 수 있지만
+80번 포트를 사용할 경우에는 :80을 생략할 수 있다.
